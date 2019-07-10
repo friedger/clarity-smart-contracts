@@ -5,7 +5,7 @@ export class LicenseClient extends Client {
     super("license", "license/license", provider);
   }
 
-  async buy(type:number, params: { sender: string }): Promise<Receipt> {
+  async buy(type: number, params: { sender: string }): Promise<Receipt> {
     const tx = this.createTransaction({
       method: { name: "buy", args: [`${type}`] }
     });
@@ -15,9 +15,11 @@ export class LicenseClient extends Client {
   }
 
   async getPrice(type: number): Promise<number> {
-    const query = this.createQuery({ method: { name: "get-price", args: [`${type}`] } });
+    const query = this.createQuery({
+      method: { name: "get-price", args: [`${type}`] }
+    });
     const res = await this.submitQuery(query);
-    console.log(res)
-    return parseInt(Result.unwrap(res));
+    const someString = Result.unwrap(res);
+    return parseInt(someString.substr(6, someString.length - 7));
   }
 }

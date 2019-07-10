@@ -26,15 +26,18 @@
 )
 
 (define-public (buy (type int))
-  (let ((price (get-price ((type type))))
-    (licenser (expects! (get address (get-licenser))
-    missing-licenser-err
-    )))
-      (begin
-        (contract-call! token transfer licenser (expects! price invalid-type-err))
-        (insert-entry! licensees ((licensee tx-sender)) ((type type)))
-        (ok 1)))
+  (let ((price (expects! (get-price type) invalid-license-type-err))
+    (licenser (expects! (get address (get-licenser)) missing-licenser-err)))
+      (let ((transferred
+        (contract-call! token transfer licenser price )))
+        (if (is-ok? transferred)
+          (begin
+            (insert-entry! licensees ((licensee tx-sender)) ((type type)))
+            (ok price))
+          payment-err))
+  )
 )
+
 
 (begin
   (insert-entry! price-list ((type 1)) ((price 1)))

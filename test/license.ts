@@ -1,9 +1,4 @@
-import {
-  Client,
-  Provider,
-  ProviderRegistry,
-  Result
-} from "@blockstack/clarity";
+import { Provider, ProviderRegistry, Result } from "@blockstack/clarity";
 
 import { FungibleTokenClient } from "../src/client/fungibleToken";
 import { LicenseClient } from "../src/client/license";
@@ -42,18 +37,45 @@ describe("oi license contract test suite", () => {
 
     it("should buy a license", async () => {
       const amountBefore = await tokenClient.balanceOf(alice);
-      const price = await licenseClient.getPrice(1)
-
-      const receipt = await licenseClient.buy(1, {sender:alice})
-      console.log(receipt);
+      const price = await licenseClient.getPrice(1);
+      const receipt = await licenseClient.buy(1, { sender: alice });
       assert.equal(receipt.success, true);
       assert.equal(
         Result.unwrap(receipt),
-        "Transaction executed and committed. Returned: (some 1)"
+        "Transaction executed and committed. Returned: 1"
       );
 
       const amountAfter = await tokenClient.balanceOf(alice);
       assert.equal(amountAfter, amountBefore - price);
+    });
+
+    it("should not buy a license of invalid type", async () => {
+      const receipt = await licenseClient.buy(2, { sender: alice });
+      assert.equal(receipt.success, false);
+      Result.match(
+        receipt,
+        () => {},
+        err =>
+          assert.equal(
+            err.toString(),
+            "ExecutionError: Execute expression on contract failed with bad output: Aborted: 2"
+          )
+      );
+    });
+
+    it("should not buy a license when insufficient funds", async () => {
+      tokenClient.transfer(bob, 19, { sender: alice });
+      const receipt = await licenseClient.buy(1, { sender: alice });
+      assert.equal(receipt.success, false);
+      Result.match(
+        receipt,
+        () => {},
+        err =>
+          assert.equal(
+            err.toString(),
+            "ExecutionError: Execute expression on contract failed with bad output: Aborted: 4"
+          )
+      );
     });
   });
 
