@@ -5,11 +5,14 @@ import {
   Result
 } from "@blockstack/clarity";
 
+import { FungibleTokenClient } from "../src/client/fungibleToken";
+import { LicenseClient } from "../src/client/license";
+
 import { assert } from "chai";
 
 describe("oi license contract test suite", () => {
-  let licenseClient: Client;
-  let tokenClient: Client;
+  let licenseClient: LicenseClient;
+  let tokenClient: FungibleTokenClient;
   let provider: Provider;
 
   const addresses = [
@@ -17,18 +20,17 @@ describe("oi license contract test suite", () => {
     "S02J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKPVKG2CE",
     "SZ2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKQ9H6DPR"
   ];
-  const alice = addresses[0];
-  const bob = addresses[1];
+  const alice = addresses[0]; // 20 tokens
+  const bob = addresses[1]; // 10 tokens
   const zoe = addresses[2];
 
   before(async () => {
     provider = await ProviderRegistry.createProvider();
-    licenseClient = new Client("oi-license", "license/license", provider);
-    tokenClient = new Client("token", "license/fungible-token", provider);
+    licenseClient = new LicenseClient(provider);
+    tokenClient = new FungibleTokenClient(provider);
   });
 
   it("should have a valid syntax", async () => {
-
     await tokenClient.deployContract();
     await licenseClient.checkContract();
   });
@@ -39,14 +41,19 @@ describe("oi license contract test suite", () => {
     });
 
     it("should buy a license", async () => {
-      const transaction = licenseClient.createTransaction({
-        method: { name: "buy", args: ["1"] }
-      });
-      await transaction.sign(alice)
-      const receipt = await licenseClient.submitTransaction(transaction);
-      console.log(receipt)
+      const amountBefore = await tokenClient.balanceOf(alice);
+      const price = await licenseClient.getPrice(1)
+
+      const receipt = await licenseClient.buy(1, {sender:alice})
+      console.log(receipt);
       assert.equal(receipt.success, true);
-      assert.equal(Result.unwrap(receipt), "100")
+      assert.equal(
+        Result.unwrap(receipt),
+        "Transaction executed and committed. Returned: (some 1)"
+      );
+
+      const amountAfter = await tokenClient.balanceOf(alice);
+      assert.equal(amountAfter, amountBefore - price);
     });
   });
 
