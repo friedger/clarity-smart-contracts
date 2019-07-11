@@ -15,8 +15,8 @@ describe("oi license contract test suite", () => {
     "S02J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKPVKG2CE",
     "SZ2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKQ9H6DPR"
   ];
-  const alice = addresses[0]; // 20 tokens
-  const bob = addresses[1]; // 10 tokens
+  const alice = addresses[0]; // 200 tokens
+  const bob = addresses[1]; // 100 tokens
   const zoe = addresses[2];
 
   before(async () => {
@@ -42,7 +42,7 @@ describe("oi license contract test suite", () => {
       assert.equal(receipt.success, true);
       assert.equal(
         Result.unwrap(receipt),
-        "Transaction executed and committed. Returned: 1"
+        "Transaction executed and committed. Returned: 100"
       );
 
       const amountAfter = await tokenClient.balanceOf(alice);
@@ -50,7 +50,7 @@ describe("oi license contract test suite", () => {
     });
 
     it("should not buy a license of invalid type", async () => {
-      const receipt = await licenseClient.buy(2, { sender: alice });
+      const receipt = await licenseClient.buy(0, { sender: alice });
       assert.equal(receipt.success, false);
       Result.match(
         receipt,
@@ -64,7 +64,7 @@ describe("oi license contract test suite", () => {
     });
 
     it("should not buy a license when insufficient funds", async () => {
-      tokenClient.transfer(bob, 19, { sender: alice });
+      tokenClient.transfer(bob, 100, { sender: alice });
       const receipt = await licenseClient.buy(1, { sender: alice });
       assert.equal(receipt.success, false);
       Result.match(
@@ -76,6 +76,19 @@ describe("oi license contract test suite", () => {
             "ExecutionError: Execute expression on contract failed with bad output: Aborted: 4"
           )
       );
+    });
+
+    it("should not have a valid license after 1 blocks", async () => {
+      const receipt = await licenseClient.buy(2, { sender: bob });
+      assert.equal(receipt.success, true);
+      let hasValidLicense = await licenseClient.hasValidLicense(bob);
+      assert.equal(hasValidLicense, true);
+      provider.mineBlock(0);
+      hasValidLicense = await licenseClient.hasValidLicense(bob);
+      assert.equal(hasValidLicense, false);
+      provider.mineBlock(0);
+      hasValidLicense = await licenseClient.hasValidLicense(bob);
+      assert.equal(hasValidLicense, false);
     });
   });
 
