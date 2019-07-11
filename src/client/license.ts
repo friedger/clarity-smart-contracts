@@ -5,12 +5,22 @@ export class LicenseClient extends Client {
     super("license", "license/license", provider);
   }
 
-  async buy(type: number, params: { sender: string }): Promise<Receipt> {
+  async buyNonExpiring(params: { sender: string }): Promise<Receipt> {
     const tx = this.createTransaction({
-      method: { name: "buy", args: [`${type}`] }
+      method: { name: "buy-non-expiring", args: [] }
     });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);
+    return res;
+  }
+
+  async buyExpiring(duration:number, params: { sender: string }): Promise<Receipt> {
+    const tx = this.createTransaction({
+      method: { name: "buy-expiring", args: [`${duration}`] }
+    });
+    await tx.sign(params.sender);
+    const res = await this.submitTransaction(tx);
+    console.log({res})
     return res;
   }
 

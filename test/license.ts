@@ -38,7 +38,7 @@ describe("oi license contract test suite", () => {
     it("should buy a license", async () => {
       const amountBefore = await tokenClient.balanceOf(alice);
       const price = await licenseClient.getPrice(1);
-      const receipt = await licenseClient.buy(1, { sender: alice });
+      const receipt = await licenseClient.buyNonExpiring({ sender: alice });
       assert.equal(receipt.success, true);
       assert.equal(
         Result.unwrap(receipt),
@@ -52,29 +52,16 @@ describe("oi license contract test suite", () => {
     it("should not buy a license if user has an non-expiring license", async () => {
       const amountBefore = await tokenClient.balanceOf(alice);
 
-      const receipt = await licenseClient.buy(2, { sender: alice });
+      const receipt = await licenseClient.buyExpiring(1, { sender: alice });
       assert.equal(receipt.success, false);
       const amountAfter = await tokenClient.balanceOf(alice);
       assert.equal(amountAfter, amountBefore);
     });
 
-    it("should not buy a license of invalid type", async () => {
-      const receipt = await licenseClient.buy(0, { sender: alice });
-      assert.equal(receipt.success, false);
-      Result.match(
-        receipt,
-        () => {},
-        err =>
-          assert.equal(
-            err.toString(),
-            "ExecutionError: Execute expression on contract failed with bad output: Aborted: 2"
-          )
-      );
-    });
 
     it("should not buy a license when insufficient funds", async () => {
       tokenClient.transfer(bob, 100, { sender: alice });
-      const receipt = await licenseClient.buy(1, { sender: alice });
+      const receipt = await licenseClient.buyNonExpiring({ sender: alice });
       assert.equal(receipt.success, false);
       Result.match(
         receipt,
@@ -88,18 +75,38 @@ describe("oi license contract test suite", () => {
     });
 
     it("should not have a valid license after 1 blocks", async () => {
-      const receipt = await licenseClient.buy(2, { sender: bob });
+      const duration = 1
+      const receipt = await licenseClient.buyExpiring(duration, { sender: bob });
       assert.equal(receipt.success, true);
+
       let hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, true);
-      provider.mineBlock(0);
+      provider.mineBlock(1);
       hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, false);
-      provider.mineBlock(0);
+      provider.mineBlock(1);
+      hasValidLicense = await licenseClient.hasValidLicense(bob);
+      assert.equal(hasValidLicense, false);
+    });
+
+    it("should not have a valid license after 2 blocks", async () => {
+      const duration = 2
+      console.log(await licenseClient.getBlockHeight())
+      const receipt = await licenseClient.buyExpiring(duration, { sender: bob });
+      assert.equal(receipt.success, true);
+      console.log(await licenseClient.getBlockHeight())
+      console.log(await licenseClient.getLicense(bob))
+      let hasValidLicense = await licenseClient.hasValidLicense(bob);
+      assert.equal(hasValidLicense, true);
+      provider.mineBlock(1);
+      hasValidLicense = await licenseClient.hasValidLicense(bob);
+      assert.equal(hasValidLicense, true);
+      provider.mineBlock(1);
       hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, false);
     });
   });
+
 
   after(async () => {
     await provider.close();

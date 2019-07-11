@@ -2,7 +2,7 @@
   ((id int))
   ((address principal)))
 
-(define-map licensees
+(define-map licenses
   ((licensee principal))
   ((type int) (block int)))
 
@@ -15,7 +15,7 @@
 (define invalid-license-type-err (err 2))
 (define missing-licenser-err (err 3))
 (define payment-err (err 4))
-
+(define license-exists-err (err 5))
 
 (define (get-licenser)
   (fetch-entry licenser-address ((id 0)))
@@ -26,7 +26,7 @@
 )
 
 (define (get-license (licensee principal))
- (fetch-entry licensees ((licensee licensee)))
+ (fetch-entry licenses ((licensee licensee)))
 )
 
 (define (get-block-height )
@@ -34,32 +34,52 @@
 )
 
 (define (has-valid-license (licensee principal) (block-height int))
-  (let ((license-type (default-to 0 (get type (fetch-entry licensees ((licensee licensee))))))
-  (license-block (default-to 0 (get block (fetch-entry licensees ((licensee licensee)))))))
+  (let ((license-type (default-to 0 (get type (fetch-entry licenses ((licensee licensee))))))
+  (license-block (default-to 0 (get block (fetch-entry licenses ((licensee licensee)))))))
     (if (not (eq? license-type 0))
       (if (eq?  license-type 1)
         'true
         (if (eq? license-type 2)
-          (< block-height (+ license-block  1))
+          (< block-height license-block)
           'false
         ))
       'false
   ))
 )
 
-(define-public (buy (type int))
-  (let ((price (expects! (get-price type) invalid-license-type-err))
+(define (should-buy? (type int) (duration int) (existing-type int) (existing-block int))
+  'true
+)
+
+(define (buy (type int) (duration int))
+  (let ((existing-license (fetch-entry licenses ((licensee tx-sender))))
+    (price (expects! (get-price type) invalid-license-type-err))
     (licenser (expects! (get address (get-licenser)) missing-licenser-err)))
-      (let ((transferred
-        (contract-call! token transfer licenser price )))
-        (if (is-ok? transferred)
-          (begin
-            (insert-entry! licensees ((licensee tx-sender)) ((type type) (block block-height)))
-            (ok price))
-          payment-err))
+    (let ((licensePrice
+      (if (eq? type 1)
+        price
+        (* price duration))))
+      (if (should-buy? type duration (default-to 0 (get type existing-license)) (default-to 0 (get block existing-license)))
+        (let ((transferred
+          (contract-call! token transfer licenser licensePrice )))
+          (if (is-ok? transferred)
+            (begin
+              (set-entry! licenses ((licensee tx-sender)) ((type type) (block (+ duration block-height))))
+              (ok licensePrice))
+            payment-err)
+        )
+        license-exists-err)
+    )
   )
 )
 
+(define-public (buy-non-expiring)
+  (buy 1 0 )
+)
+
+(define-public (buy-expiring (duration int))
+  (buy 2 duration)
+)
 
 (begin
   (insert-entry! price-list ((type 1)) ((price 100)))
