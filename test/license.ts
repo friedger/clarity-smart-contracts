@@ -49,6 +49,15 @@ describe("oi license contract test suite", () => {
       assert.equal(amountAfter, amountBefore - price);
     });
 
+    it("should not buy a license if user has an non-expiring license", async () => {
+      const amountBefore = await tokenClient.balanceOf(alice);
+
+      const receipt = await licenseClient.buy(2, { sender: alice });
+      assert.equal(receipt.success, false);
+      const amountAfter = await tokenClient.balanceOf(alice);
+      assert.equal(amountAfter, amountBefore);
+    });
+
     it("should not buy a license of invalid type", async () => {
       const receipt = await licenseClient.buy(0, { sender: alice });
       assert.equal(receipt.success, false);
