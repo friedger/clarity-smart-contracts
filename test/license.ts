@@ -58,7 +58,6 @@ describe("oi license contract test suite", () => {
       assert.equal(amountAfter, amountBefore);
     });
 
-
     it("should not buy a license when insufficient funds", async () => {
       tokenClient.transfer(bob, 100, { sender: alice });
       const receipt = await licenseClient.buyNonExpiring({ sender: alice });
@@ -69,14 +68,16 @@ describe("oi license contract test suite", () => {
         err =>
           assert.equal(
             err.toString(),
-            "ExecutionError: Execute expression on contract failed with bad output: Aborted: 4"
+            "ExecutionError: Execute expression on contract failed with bad output: Aborted: 5"
           )
       );
     });
 
     it("should not have a valid license after 1 blocks", async () => {
-      const duration = 1
-      const receipt = await licenseClient.buyExpiring(duration, { sender: bob });
+      const duration = 1;
+      const receipt = await licenseClient.buyExpiring(duration, {
+        sender: bob
+      });
       assert.equal(receipt.success, true);
 
       let hasValidLicense = await licenseClient.hasValidLicense(bob);
@@ -90,12 +91,13 @@ describe("oi license contract test suite", () => {
     });
 
     it("should not have a valid license after 2 blocks", async () => {
-      const duration = 2
-      console.log(await licenseClient.getBlockHeight())
-      const receipt = await licenseClient.buyExpiring(duration, { sender: bob });
+      const duration = 2;
+      const receipt = await licenseClient.buyExpiring(duration, {
+        sender: bob
+      });
       assert.equal(receipt.success, true);
-      console.log(await licenseClient.getBlockHeight())
-      console.log(await licenseClient.getLicense(bob))
+      console.log(await licenseClient.getBlockHeight());
+      console.log(await licenseClient.getLicense(bob));
       let hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, true);
       provider.mineBlock(1);
@@ -106,7 +108,6 @@ describe("oi license contract test suite", () => {
       assert.equal(hasValidLicense, false);
     });
   });
-
 
   after(async () => {
     await provider.close();

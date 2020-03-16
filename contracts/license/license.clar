@@ -35,20 +35,34 @@
 
 (define (has-valid-license (licensee principal) (block-height int))
   (let ((license-type (default-to 0 (get type (fetch-entry licenses ((licensee licensee))))))
-  (license-block (default-to 0 (get block (fetch-entry licenses ((licensee licensee)))))))
+    (license-block (default-to 0 (get block (fetch-entry licenses ((licensee licensee)))))))
     (if (not (eq? license-type 0))
       (if (eq?  license-type 1)
         'true
         (if (eq? license-type 2)
           (< block-height license-block)
           'false
-        ))
+         )
+      )
       'false
-  ))
+    )
+  )
 )
 
 (define (should-buy? (type int) (duration int) (existing-type int) (existing-block int))
-  'true
+  (if (eq? existing-type 1)
+    'false
+    (if (eq? existing-type 2)
+      (if (eq? type 1)
+        'true
+        (if (eq? type 2)
+          (< existing-block (get-block-height))
+          'true
+        )
+      )
+      'true
+    )
+  )
 )
 
 (define (buy (type int) (duration int))
