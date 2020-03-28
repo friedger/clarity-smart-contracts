@@ -17,17 +17,22 @@
   (var-get licenser-address)
 )
 
-(define-private (get-price? (type int))
-  (get price (map-get? price-list ((type type))))
+(define-private (get-price (t int))
+  (match (map-get? price-list ((type t)))
+    entry (get price entry)
+    0
+  )
 )
 
 (define-private (get-license? (licensee principal))
- (map-get? licenses ((licensee licensee)))
+ (map-get? licenses {licensee: licensee})
 )
 
 (define-private (get-block-height)
-  10
+  block-height
 )
+
+(define-fungible-token stacks)
 
 
 (define-private (has-valid-license (licensee principal) (when int))
@@ -62,33 +67,36 @@
   )
 )
 
-(define-private (buy (type int) (duration int))
-  (let ((existing-license (get-license? ((licensee tx-sender))))
-    (price (get-price? type))
-    (licensePrice
+(define-private (buy (type int) (duration int) (sender principal))
+  (let ((existing-license (get-license? ((licensee sender)))
+    (price (get-price type))
+    (license-price
       (if (is-eq type 1)
         price
-        (* price duration))))
-      (if (should-buy type duration (default-to 0 (get type existing-license)) (default-to 0 (get block existing-license)))
-        (let ((transferred
-          (ok 'true));;(contract-call! token transfer licenser licensePrice )))
-          (if (is-ok transferred)
-            (begin
-              (map-set licenses ((licensee tx-sender)) ((type type) (block (+ duration (get-block-height)))))
-              (ok licensePrice))
-            payment-err)
-        )
-        license-exists-err)
+        (* price duration)))
     )
-  )
+    (buynow (match existing-license
+        license (should-buy type duration (get type license) (get block license))
+        'false)))
+    (if buynow
+      (let ((transferred
+        (ft-transfer? stacks (to-uint license-price) tx-sender licenser )))
+        (if (is-ok transferred)
+          (begin
+            (map-set licenses ((licensee sender)) ((type type) (block (+ duration (get-block-height)))))
+            (ok licensePrice))
+          payment-err)
+      )
+      license-exists-err)
+    )
 )
 
 (define-public (buy-non-expiring)
-  (buy 1 0 )
+  (buy 1 0 tx-sender)
 )
 
 (define-public (buy-expiring (duration int))
-  (buy 2 duration)
+  (buy 2 duration tx-sender)
 )
 
 (begin
