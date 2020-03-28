@@ -2,10 +2,14 @@ import { Client, Provider, Receipt, Result } from "@blockstack/clarity";
 
 export class FungibleTokenClient extends Client {
   constructor(provider: Provider) {
-    super("token", "license/fungible-token", provider);
+    super("token", "fungible-token", provider);
   }
 
-  async transfer(to: string, value: number, params: { sender: string }): Promise<Receipt> {
+  async transfer(
+    to: string,
+    value: number,
+    params: { sender: string }
+  ): Promise<Receipt> {
     const tx = this.createTransaction({
       method: { name: "transfer", args: [`'${to}`, `${value}`] }
     });
@@ -15,12 +19,18 @@ export class FungibleTokenClient extends Client {
   }
 
   async balanceOf(owner: string): Promise<number> {
-    const query = this.createQuery({ method: { name: "balance-of", args: [`'${owner}`] } });
+    const query = this.createQuery({
+      method: { name: "balance-of", args: [`'${owner}`] }
+    });
     const res = await this.submitQuery(query);
     return parseInt(Result.unwrap(res));
   }
 
-  async approve(spender: string, amount: number, params: { sender: string }): Promise<Receipt> {
+  async approve(
+    spender: string,
+    amount: number,
+    params: { sender: string }
+  ): Promise<Receipt> {
     const tx = this.createTransaction({
       method: { name: "approve", args: [`'${spender}`, `${amount}`] }
     });
@@ -30,7 +40,9 @@ export class FungibleTokenClient extends Client {
   }
 
   async revoke(spender: string, params: { sender: string }): Promise<Receipt> {
-    const tx = this.createTransaction({ method: { name: "revoke", args: [`'${spender}`] } });
+    const tx = this.createTransaction({
+      method: { name: "revoke", args: [`'${spender}`] }
+    });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);
     return res;
@@ -51,7 +63,10 @@ export class FungibleTokenClient extends Client {
     params: { sender: string }
   ): Promise<Receipt> {
     const tx = this.createTransaction({
-      method: { name: "transfer-from", args: [`'${from}`, `'${to}`, `${value}`] }
+      method: {
+        name: "transfer-from",
+        args: [`'${from}`, `'${to}`, `${value}`]
+      }
     });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);

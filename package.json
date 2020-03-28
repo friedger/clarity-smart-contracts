@@ -14,16 +14,18 @@
     "test": "mocha"
   },
   "devDependencies": {
-    "@types/node": "^10",
-    "typescript": "^3.5.2",
-    "ts-node": "^8.2.0",
-    "chai": "^4.2.0",
     "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^10",
+    "bn": "^1.0.5",
+    "chai": "^4.2.0",
+    "fs": "^0.0.1-security",
     "mocha": "^6.1.4",
-    "@types/mocha": "^5.2.7"
+    "ts-node": "^8.2.0",
+    "typescript": "^3.5.2"
   },
   "dependencies": {
-    "@blockstack/clarity": "^0.1.9-alpha.0",
-    "@blockstack/clarity-native-bin": "^0.1.9-alpha.0"
+    "@blockstack/clarity": "^0.1.13-alpha.5",
+    "@blockstack/clarity-native-bin": "^0.1.13-alpha.5"
   }
 }
