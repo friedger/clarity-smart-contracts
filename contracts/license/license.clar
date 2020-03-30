@@ -29,30 +29,34 @@
 )
 
 (define-private (get-block-height)
-  block-height
+  (to-int block-height)
 )
 
 (define-fungible-token stacks)
 
 
-(define-private (has-valid-license (licensee principal) (when int))
-  (let ((license-type (default-to 0 (get type (map-get? licenses ((licensee licensee))))))
-    (license-block (default-to 0 (get block (map-get? licenses ((licensee licensee)))))))
-    (if (not (is-eq license-type 0))
-      (if (is-eq  license-type 1)
-        'true
-        (if (is-eq license-type 2)
-          (< when license-block)
-          'false
-         )
+(define-public (has-valid-license (licensee principal))
+  (let (
+    (when (get-block-height))
+    (license (get-license? licensee)))
+    (let ((license-type (default-to 0 (get type license)))
+      (license-block (default-to 0 (get block license))))
+      (if (not (is-eq license-type 0))
+        (if (is-eq  license-type 1)
+          (ok 'true)
+          (if (is-eq license-type 2)
+            (ok (< when license-block))
+            (ok 'false)
+          )
+        )
+        (ok 'false)
       )
-      'false
     )
   )
 )
 
 (define-private (should-buy (type int) (duration int) (existing-type int) (existing-block int))
-  (if (is-eq existing-type 1)
+    (if (is-eq existing-type 1)
     'false
     (if (is-eq existing-type 2)
       (if (is-eq type 1)
@@ -68,27 +72,27 @@
 )
 
 (define-private (buy (type int) (duration int) (sender principal))
-  (let ((existing-license (get-license? ((licensee sender)))
-    (price (get-price type))
-    (license-price
-      (if (is-eq type 1)
-        price
-        (* price duration)))
-    )
-    (buynow (match existing-license
-        license (should-buy type duration (get type license) (get block license))
-        'false)))
-    (if buynow
-      (let ((transferred
-        (ft-transfer? stacks (to-uint license-price) tx-sender licenser )))
-        (if (is-ok transferred)
-          (begin
-            (map-set licenses ((licensee sender)) ((type type) (block (+ duration (get-block-height)))))
-            (ok licensePrice))
-          payment-err)
-      )
-      license-exists-err)
-    )
+  (let ((existing-license (get-license? sender))
+    (price (get-price type)))
+    (let (
+      (license-price
+        (if (is-eq type 1)
+          price
+          (* price duration))))
+      (let
+        ((buynow (match existing-license
+          license (should-buy type duration (get type license) (get block license))
+          'false)))
+        (if buynow
+          (let ((transferred (ft-transfer? stacks (to-uint license-price) tx-sender (get-licenser) )))
+            (if (is-ok transferred)
+              (begin
+                (map-set licenses ((licensee sender)) ((type type) (block (+ duration (get-block-height)))))
+                (ok license-price))
+              payment-err)
+          )
+          license-exists-err)
+  )))
 )
 
 (define-public (buy-non-expiring)
