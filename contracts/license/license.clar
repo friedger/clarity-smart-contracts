@@ -35,9 +35,8 @@
 (define-fungible-token stacks)
 
 
-(define-public (has-valid-license (licensee principal))
+(define-public (has-valid-license (licensee principal) (when int))
   (let (
-    (when (get-block-height))
     (license (get-license? licensee)))
     (let ((license-type (default-to 0 (get type license)))
       (license-block (default-to 0 (get block license))))
