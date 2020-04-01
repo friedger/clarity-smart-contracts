@@ -2,7 +2,8 @@
 
 (define-map licenses
   ((licensee principal))
-  ((type int) (block int)))
+  ((type int) (
+   block int)))
 
 (define-map price-list ((type int)) ((price int)))
 
@@ -18,7 +19,7 @@
 )
 
 (define-private (get-price (t int))
-  (match (map-get? price-list ((type t)))
+  (match (map-get? price-list {type t})
     entry (get price entry)
     0
   )
@@ -35,8 +36,9 @@
 (define-fungible-token stacks)
 
 
-(define-public (has-valid-license (licensee principal) (when int))
+(define-public (has-valid-license (licensee principal))
   (let (
+    (when (get-block-height))
     (license (get-license? licensee)))
     (let ((license-type (default-to 0 (get type license)))
       (license-block (default-to 0 (get block license))))
@@ -72,7 +74,7 @@
 
 (define-private (buy (type int) (duration int) (sender principal))
   (let ((existing-license (get-license? sender))
-    (price (get-price type)))
+         (price (get-price type)))
     (let (
       (license-price
         (if (is-eq type 1)
@@ -86,7 +88,10 @@
           (let ((transferred (ft-transfer? stacks (to-uint license-price) tx-sender (get-licenser) )))
             (if (is-ok transferred)
               (begin
-                (map-set licenses ((licensee sender)) ((type type) (block (+ duration (get-block-height)))))
+                (map-set licenses {licensee sender} {
+                  type type
+                  block (+ duration (get-block-height))
+                  })
                 (ok license-price))
               payment-err)
           )
@@ -103,6 +108,6 @@
 )
 
 (begin
-  (map-insert price-list ((type 1)) ((price 100)))
-  (map-insert price-list ((type 2)) ((price 1)))
+  (map-insert price-list {type 1} {price 100})
+  (map-insert price-list {type 2} {price 1})
 )

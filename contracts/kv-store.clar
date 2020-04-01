@@ -1,11 +1,12 @@
-(define-map store ((key (buff 32))) ((value (buff 32))))
+(define-map store ((key principal))
+  ((rocket-id int) (ordered-at-block int) (ready-at-block int) (balance int) (size int)))
 
-(define-public (get-value (key (buff 32)))
-    (match (map-get? store {key: key})
-        entry (ok (get value entry))
+(define-public (get-value (key principal))
+    (match (map-get? store ((key key)))
+        entry (ok (get v2 entry))
         (err 0)))
 
-(define-public (set-value (key (buff 32)) (value (buff 32)))
+(define-public (set-value (key principal))
     (begin
-        (map-set store {key: key} {value: value})
+        (map-set store ((key tx-sender)) ((rocket-id 100) (ordered-at-block 7) (ready-at-block 8) (balance 9) (size 4)))
         (ok 'true)))
