@@ -57,9 +57,9 @@ describe("hold token test suite", async () => {
         version: TransactionVersion.Testnet,
         postConditions: [
           makeStandardFungiblePostCondition(
-            contractAddress,
+            "ST000000000000000000002AMW42H",
             FungibleConditionCode.Equal,
-            new BigNum(0),
+            new BigNum(5),
             new AssetInfo(contractAddress, "hodl-token", "hodl-token")
           ),
           makeStandardFungiblePostCondition(
