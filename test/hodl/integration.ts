@@ -17,12 +17,14 @@ import {
 describe("hold token test suite", async () => {
   it("should buy and hold tokens", async () => {
     let keys = JSON.parse(fs.readFileSync("./keys.json").toString());
+    let secretKey = keys.secretKey;
+    let keys2 = JSON.parse(fs.readFileSync("./keys2.json").toString());
+    let secretKey2 = keys2.secretKey;
 
     let contractName = "hodl-token";
     let code = fs.readFileSync("./contracts/tokens/hodl-token.clar").toString();
 
     let feeRate = new BigNum(0);
-    let secretKey = keys.secretKey;
 
     let transaction = makeSmartContractDeploy(
       contractName,
@@ -56,15 +58,15 @@ describe("hold token test suite", async () => {
         postConditions: [
           makeStandardFungiblePostCondition(
             contractAddress,
-            FungibleConditionCode.GreaterEqual,
-            new BigNum(55),
-            new AssetInfo(contractAddress, "hold-token", "hold-token")
+            FungibleConditionCode.Equal,
+            new BigNum(0),
+            new AssetInfo(contractAddress, "hodl-token", "hodl-token")
           ),
           makeStandardFungiblePostCondition(
             contractAddress,
-            FungibleConditionCode.GreaterEqual,
-            new BigNum(55),
-            new AssetInfo(contractAddress, "hold-token", "spendable-token")
+            FungibleConditionCode.Equal,
+            new BigNum(5),
+            new AssetInfo(contractAddress, "hodl-token", "spendable-token")
           ),
         ],
       }
@@ -72,5 +74,23 @@ describe("hold token test suite", async () => {
 
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx2.bin", transaction.serialize());
+
+    await new Promise((r) => setTimeout(r, 10000));
+
+    transaction = makeContractCall(
+      contractAddress,
+      contractName,
+      "hodl-balance-of",
+      [standardPrincipalCV(keys.stacksAddress)],
+      feeRate,
+      secretKey2,
+      {
+        nonce: new BigNum(0),
+        version: TransactionVersion.Testnet,
+      }
+    );
+
+    console.log(transaction.serialize().toString("hex"));
+    fs.writeFileSync("mempool/tx3.bin", transaction.serialize());
   });
 });
