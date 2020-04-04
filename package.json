@@ -7,17 +7,17 @@
   },
   "repository": "https://github.com/friedger/oi-license.git",
   "private": true,
+  "type": "module",
   "engines": {
-    "node": ">=10"
+    "node": ">=13"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha 'test/hodl/*.ts'"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
     "@types/node": "^10",
-    "bn": "^1.0.5",
     "chai": "^4.2.0",
     "fs": "^0.0.1-security",
     "mocha": "^6.1.4",
@@ -25,7 +25,8 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
-    "@blockstack/clarity": "^0.1.13-alpha.5",
-    "@blockstack/clarity-native-bin": "^0.1.13-alpha.5"
+    "@blockstack/clarity": "^0.1.13-alpha.6",
+    "@blockstack/clarity-native-bin": "^0.1.13-alpha.6",
+    "bn.js": "^5.1.1"
   }
 }

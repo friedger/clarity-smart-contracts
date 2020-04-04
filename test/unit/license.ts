@@ -1,7 +1,7 @@
 import { Provider, ProviderRegistry, Result } from "@blockstack/clarity";
 
-import { FungibleTokenClient } from "../src/client/fungibleToken";
-import { LicenseClient } from "../src/client/license";
+import { FungibleTokenClient } from "../../src/client/fungibleToken";
+import { LicenseClient } from "../../src/client/license";
 
 import { assert } from "chai";
 

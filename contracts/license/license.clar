@@ -2,8 +2,8 @@
 
 (define-map licenses
   ((licensee principal))
-  ((type int) (
-   block int)))
+  ((type int)
+   (block int)))
 
 (define-map price-list ((type int)) ((price int)))
 
@@ -19,14 +19,14 @@
 )
 
 (define-private (get-price (t int))
-  (match (map-get? price-list {type t})
+  (match (map-get? price-list ((type t)))
     entry (get price entry)
     0
   )
 )
 
 (define-private (get-license? (licensee principal))
- (map-get? licenses {licensee: licensee})
+ (map-get? licenses ((licensee licensee)))
 )
 
 (define-private (get-block-height)
@@ -37,12 +37,13 @@
 
 
 (define-public (has-valid-license (licensee principal))
-  (let (
-    (when (get-block-height))
+  (let ((
+    when (get-block-height))
     (license (get-license? licensee)))
     (let ((license-type (default-to 0 (get type license)))
       (license-block (default-to 0 (get block license))))
-      (if (not (is-eq license-type 0))
+      (if (is-eq license-type 0)
+        (ok 'false)
         (if (is-eq  license-type 1)
           (ok 'true)
           (if (is-eq license-type 2)
@@ -50,7 +51,6 @@
             (ok 'false)
           )
         )
-        (ok 'false)
       )
     )
   )
@@ -73,25 +73,24 @@
 )
 
 (define-private (buy (type int) (duration int) (sender principal))
-  (let ((existing-license (get-license? sender))
+  (let ((existing-license? (get-license? sender))
          (price (get-price type)))
-    (let (
-      (license-price
+    (let ((license-price
         (if (is-eq type 1)
           price
           (* price duration))))
       (let
-        ((buynow (match existing-license
-          license (should-buy type duration (get type license) (get block license))
-          'false)))
+        ((buynow (match existing-license?
+          license (print (should-buy type duration (get type license) (get block license)))
+          'true)))
         (if buynow
-          (let ((transferred (ft-transfer? stacks (to-uint license-price) tx-sender (get-licenser) )))
+          (let ((transferred (stx-transfer? (to-uint license-price) tx-sender (get-licenser))))
             (if (is-ok transferred)
               (begin
-                (map-set licenses {licensee sender} {
-                  type type
-                  block (+ duration (get-block-height))
-                  })
+                (map-set licenses ((licensee sender))
+                  ((type type)
+                  (block (+ duration (get-block-height))))
+                  )
                 (ok license-price))
               payment-err)
           )

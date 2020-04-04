@@ -2,7 +2,7 @@ import { Client, Provider, Receipt, Result } from "@blockstack/clarity";
 
 export class FungibleTokenClient extends Client {
   constructor(provider: Provider) {
-    super("token", "fungible-token", provider);
+    super("token", "tokens/fungible-token", provider);
   }
 
   async transfer(

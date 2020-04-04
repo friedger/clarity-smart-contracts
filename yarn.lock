@@ -3,9 +3,9 @@
 
 
 "@blockstack/clarity-native-bin@^0.1.13-alpha.5":
-  version "0.1.13-alpha.5"
-  resolved "https://registry.yarnpkg.com/@blockstack/clarity-native-bin/-/clarity-native-bin-0.1.13-alpha.5.tgz#ac36dfd66c3c2245bf4605988592d3970496432e"
-  integrity sha512-2k1yfHX3s6byW4tJ15Apmk7Yxp2dgjsUFy5RES2hv35Fo8zYlIVIkX8cD+9dCANccVl7OaGA/JblszjbL6QiNA==
+  version "0.1.13-alpha.6"
+  resolved "https://registry.yarnpkg.com/@blockstack/clarity-native-bin/-/clarity-native-bin-0.1.13-alpha.6.tgz#f2d8c905d4b2b6aac561aa4cf16159ad7747b214"
+  integrity sha512-iQeSn5/UmiRGz631Hqf+oA8x77++eIqzjHDgZT40GNsuFEduYwUnxQbsRqq7q0yJpkemcqd9bUNLv33qQRGoXA==
   dependencies:
     fs-extra "^8.0.1"
     node-fetch "^2.6.0"
@@ -13,9 +13,9 @@
     tar "^4.4.8"
 
 "@blockstack/clarity@^0.1.13-alpha.5":
-  version "0.1.13-alpha.5"
-  resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.1.13-alpha.5.tgz#d1eec32f5495f220a804e9e013fb66ba3a4de309"
-  integrity sha512-7PxeHYY0s6zFE2oeSQNjN+NgC7viFUlO3L2byiQRGc3vhKWhTPUZXah/Okq89JuE28QVsSXgMfUlhhOAZzGAUw==
+  version "0.1.13-alpha.6"
+  resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.1.13-alpha.6.tgz#8d788fa53e8065f3471114ee35e6f4e5ca807352"
+  integrity sha512-CwryV6mPflR/uxxIqLHEiGrjkuHbF8Rn6jaO45A7w1g1tt2KuC0WuKJsLXdzWrnQPEQsKIxs/1i9av5QA1db3g==
 
 "@types/chai@^4.1.7":
   version "4.2.11"
@@ -76,10 +76,10 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
-bn@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/bn/-/bn-1.0.5.tgz#fdf5fdeede044884ea7ee62adff763ee99144fa5"
-  integrity sha512-7TvGbqbZb6lDzsBtNz1VkdXXV0BVmZKPPViPmo2IpvwaryF7P+QKYKACyVkwo2mZPr2CpFiz7EtgPEcc3o/JFQ==
+bn.js@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.1.1.tgz#48efc4031a9c4041b9c99c6941d903463ab62eb5"
+  integrity sha512-IUTD/REb78Z2eodka1QZyyEk66pciRcP6Sroka0aI3tG/iwIdYLrBD62RsubR7vqdt3WyX8p4jxeatzmRSphtA==
 
 brace-expansion@^1.1.7:
   version "1.1.11"
@@ -441,6 +441,11 @@ minimist@0.0.8:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
   integrity sha1-hX/Kv8M5fSYluCKCYuhqp6ARsF0=
 
+minimist@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
+  integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
+
 minipass@^2.6.0, minipass@^2.8.6, minipass@^2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/minipass/-/minipass-2.9.0.tgz#e713762e7d3e32fed803115cf93e04bca9fcc9a6"
@@ -456,12 +461,19 @@ minizlib@^1.2.1:
   dependencies:
     minipass "^2.9.0"
 
-mkdirp@0.5.1, mkdirp@^0.5.0:
+mkdirp@0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   integrity sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
   dependencies:
     minimist "0.0.8"
+
+mkdirp@^0.5.0:
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.5.tgz#d91cefd62d1436ca0f41620e251288d420099def"
+  integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
+  dependencies:
+    minimist "^1.2.5"
 
 mocha@^6.1.4:
   version "6.2.2"

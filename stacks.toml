@@ -1,0 +1,6 @@
+[mempool]
+path = "/home/friedger/_repos/github/friedger/oi-license/mempool"
+
+[[mstx_balance]]
+address = "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M"
+amount = 100000000
