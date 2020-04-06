@@ -2,7 +2,7 @@
 
 (define-fungible-token spendable-token)
 (define-fungible-token hodl-token)
-(define-constant bank-account 'ST000000000000000000002AMW42H)
+(define-constant bank-account 'ST100000000000000000000000000000001YKQJ4P)
 
 
 ;; Public functions
