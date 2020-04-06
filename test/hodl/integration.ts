@@ -9,10 +9,7 @@ import {
   AssetInfo,
   uintCV,
 } from "@blockstack/stacks-transactions";
-import {
-  makeStandardSTXPostCondition,
-  makeStandardFungiblePostCondition,
-} from "@blockstack/stacks-transactions/lib/src/builders";
+import { makeStandardFungiblePostCondition } from "@blockstack/stacks-transactions/lib/src/builders";
 
 describe("hold token test suite", async () => {
   it("should buy and hold tokens", async () => {
@@ -57,7 +54,7 @@ describe("hold token test suite", async () => {
         version: TransactionVersion.Testnet,
         postConditions: [
           makeStandardFungiblePostCondition(
-            "ST000000000000000000002AMW42H",
+            "ST100000000000000000000000000000001YKQJ4P",
             FungibleConditionCode.Equal,
             new BigNum(5),
             new AssetInfo(contractAddress, "hodl-token", "hodl-token")

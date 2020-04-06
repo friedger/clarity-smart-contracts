@@ -13,7 +13,7 @@ describe("oi license contract test suite", () => {
   const addresses = [
     "SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7",
     "S02J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKPVKG2CE",
-    "SZ2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKQ9H6DPR"
+    "SZ2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKQ9H6DPR",
   ];
   const alice = addresses[0]; // 200 tokens
   const bob = addresses[1]; // 100 tokens
@@ -26,8 +26,13 @@ describe("oi license contract test suite", () => {
   });
 
   it("should have a valid syntax", async () => {
-    await tokenClient.deployContract();
+    await licenseClient.deployContract();
     await licenseClient.checkContract();
+  });
+
+  it("should use valid token", async () => {
+    await tokenClient.deployContract();
+    await tokenClient.checkContract();
   });
 
   describe("deployed contract tests", () => {
@@ -65,7 +70,7 @@ describe("oi license contract test suite", () => {
       Result.match(
         receipt,
         () => {},
-        err =>
+        (err) =>
           assert.equal(
             err.toString(),
             "ExecutionError: Execute expression on contract failed with bad output: Aborted: 5"
@@ -76,7 +81,7 @@ describe("oi license contract test suite", () => {
     it("should not have a valid license after 1 blocks", async () => {
       const duration = 1;
       const receipt = await licenseClient.buyExpiring(duration, {
-        sender: bob
+        sender: bob,
       });
       assert.equal(receipt.success, true);
 
@@ -93,7 +98,7 @@ describe("oi license contract test suite", () => {
     it("should not have a valid license after 2 blocks", async () => {
       const duration = 2;
       const receipt = await licenseClient.buyExpiring(duration, {
-        sender: bob
+        sender: bob,
       });
       assert.equal(receipt.success, true);
       console.log(await licenseClient.getBlockHeight());

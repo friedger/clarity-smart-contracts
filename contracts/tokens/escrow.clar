@@ -1,30 +1,46 @@
-
-(define-constant buyer 'ST12)
-(define-constant seller 'ST)
-(define-constant escrow 'S23)
+(define-constant buyer 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)
+(define-constant seller 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9)
+(define-constant escrow 'ST100000000000000000000000000000001YKQJ4P)
 (define-data-var buyerOk 'false)
 (define-data-var sellerOk 'false)
+(define-data-var balance uint 0)
 
-(define-private (payout-balance))
+(define-private (payout-balance)
+  (stx-transfer? balance escrow seller)
+)
+
 (define-public (accept)
   (begin
     (if (is-eq tx-sender buyer)
-      (var-set buyerOk 'true)
+      (begin
+        (var-set buyerOk 'true)
+        (ok 'true)
+      )
       (if (is-eq tx-sender seller)
-        (var-set sellerOk 'true)
-        'false
+        (begin
+          (var-set sellerOk 'true)
+          (ok 'true)
+        )
+        (ok 'false)
       )
     )
     (if (and (var-get buyerOk) (var-get sellerOk)
       (payout-balance)
-      (if (and (var-get buyerOk) (not (var-get sellerOk) )))
+      (ok 'true)
     )
   )
 )
 
-(define-public deposit)
-(define-public cancel)
-(define pay-balance )
+(define-public (deposit (amount uint))
+  (begin
+    (var-set balance (+ amount (var-get balance))
+    (stx-transfer? amount tx-sender escrow)
+  )
+)
 
-(begin
+(define-public (cancel)
+  (if (or (is-eq tx-sender buyer) (is-eq tx-sender seller))
+    (stx-transfer? amount escrow buyer)
+    (ok 'false)
+  )
 )
