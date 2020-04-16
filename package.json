@@ -13,7 +13,8 @@
   },
   "scripts": {
     "hodl": "mocha 'test/integration/hodl-token.ts'",
-    "test": "mocha 'test/unit/*.ts'"
+    "test": "mocha 'test/unit/*.ts'",
+    "license": "mocha 'test/integration/license.ts'"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
