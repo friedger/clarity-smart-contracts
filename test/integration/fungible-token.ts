@@ -11,6 +11,8 @@ import {
 } from "@blockstack/stacks-transactions";
 import { makeStandardFungiblePostCondition } from "@blockstack/stacks-transactions/lib/src/builders";
 
+const STACKS_API_URL = "http://127.0.0.1:9000/v2/transactions";
+
 describe("fungible token test suite", async () => {
   it("should buy and hold tokens", async () => {
     let keys = JSON.parse(fs.readFileSync("./keys.json").toString());
@@ -23,7 +25,7 @@ describe("fungible token test suite", async () => {
       .readFileSync("./contracts/tokens/fungible-token.clar")
       .toString();
 
-    let feeRate = new BigNum(0);
+    let feeRate = new BigNum(5000);
 
     let transaction = makeSmartContractDeploy(
       contractName,
@@ -37,12 +39,14 @@ describe("fungible token test suite", async () => {
     );
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx1.bin", transaction.serialize());
+    var result = await transaction.broadcast(STACKS_API_URL);
+    console.log(result);
 
     await new Promise((r) => setTimeout(r, 10000));
 
     var contractAddress = keys.stacksAddress;
     var functionName = "transfer-token";
-    var functionArgs = [uintCV(5)];
+    var functionArgs = [uintCV(5), standardPrincipalCV(keys2.stacksAddress)];
 
     transaction = makeContractCall(
       contractAddress,
@@ -56,16 +60,10 @@ describe("fungible token test suite", async () => {
         version: TransactionVersion.Testnet,
         postConditions: [
           makeStandardFungiblePostCondition(
-            "ST100000000000000000000000000000001YKQJ4P",
+            keys.stacksAddress,
             FungibleConditionCode.Equal,
             new BigNum(5),
-            new AssetInfo(contractAddress, "hodl-token", "hodl-token")
-          ),
-          makeStandardFungiblePostCondition(
-            contractAddress,
-            FungibleConditionCode.Equal,
-            new BigNum(5),
-            new AssetInfo(contractAddress, "hodl-token", "spendable-token")
+            new AssetInfo(contractAddress, contractName, "fungible-token")
           ),
         ],
       }
@@ -73,13 +71,14 @@ describe("fungible token test suite", async () => {
 
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx2.bin", transaction.serialize());
+    var result = await transaction.broadcast(STACKS_API_URL);
 
     await new Promise((r) => setTimeout(r, 10000));
 
     transaction = makeContractCall(
       contractAddress,
       contractName,
-      "hodl-balance-of",
+      "balance-of",
       [standardPrincipalCV(keys.stacksAddress)],
       feeRate,
       secretKey2,
@@ -91,5 +90,7 @@ describe("fungible token test suite", async () => {
 
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx3.bin", transaction.serialize());
+    var result = await transaction.broadcast(STACKS_API_URL);
+    console.log(result);
   });
 });

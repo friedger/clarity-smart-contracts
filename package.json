@@ -14,7 +14,9 @@
   "scripts": {
     "hodl": "mocha 'test/integration/hodl-token.ts'",
     "test": "mocha 'test/unit/*.ts'",
-    "license": "mocha 'test/integration/license.ts'"
+    "license": "mocha 'test/integration/license.ts'",
+    "escrow": "mocha 'test/integration/escrow.ts'",
+    "fungible": "mocha 'test/integration/fungible-token.ts'"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
