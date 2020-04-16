@@ -2,7 +2,11 @@ import { Client, Provider, Receipt, Result } from "@blockstack/clarity";
 
 export class FungibleTokenClient extends Client {
   constructor(provider: Provider) {
-    super("token", "tokens/fungible-token", provider);
+    super(
+      "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M.token",
+      "tokens/fungible-token",
+      provider
+    );
   }
 
   async transfer(
@@ -11,7 +15,7 @@ export class FungibleTokenClient extends Client {
     params: { sender: string }
   ): Promise<Receipt> {
     const tx = this.createTransaction({
-      method: { name: "transfer", args: [`'${to}`, `${value}`] }
+      method: { name: "transfer-token", args: [`'${to}`, `${value}`] },
     });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);
@@ -20,7 +24,7 @@ export class FungibleTokenClient extends Client {
 
   async balanceOf(owner: string): Promise<number> {
     const query = this.createQuery({
-      method: { name: "balance-of", args: [`'${owner}`] }
+      method: { name: "balance-of", args: [`'${owner}`] },
     });
     const res = await this.submitQuery(query);
     return parseInt(Result.unwrap(res));
@@ -32,7 +36,7 @@ export class FungibleTokenClient extends Client {
     params: { sender: string }
   ): Promise<Receipt> {
     const tx = this.createTransaction({
-      method: { name: "approve", args: [`'${spender}`, `${amount}`] }
+      method: { name: "approve", args: [`'${spender}`, `${amount}`] },
     });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);
@@ -41,7 +45,7 @@ export class FungibleTokenClient extends Client {
 
   async revoke(spender: string, params: { sender: string }): Promise<Receipt> {
     const tx = this.createTransaction({
-      method: { name: "revoke", args: [`'${spender}`] }
+      method: { name: "revoke", args: [`'${spender}`] },
     });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);
@@ -50,7 +54,7 @@ export class FungibleTokenClient extends Client {
 
   async allowanceOf(spender: string, owner: string): Promise<number> {
     const query = this.createQuery({
-      method: { name: "allowance-of", args: [`'${spender}`, `'${owner}`] }
+      method: { name: "allowance-of", args: [`'${spender}`, `'${owner}`] },
     });
     const res = await this.submitQuery(query);
     return parseInt(Result.unwrap(res));
@@ -65,8 +69,8 @@ export class FungibleTokenClient extends Client {
     const tx = this.createTransaction({
       method: {
         name: "transfer-from",
-        args: [`'${from}`, `'${to}`, `${value}`]
-      }
+        args: [`'${from}`, `'${to}`, `${value}`],
+      },
     });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);

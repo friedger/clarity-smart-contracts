@@ -34,79 +34,74 @@
 ;; Gets the amount of tokens that an owner allowed to a spender.
 (define-private (allowance-of (spender principal) (owner principal))
   (begin
-    (print
-         (map-get? allowances ((spender spender) (owner owner))))
-    (print (get allowance
-         (map-get? allowances ((spender spender) (owner owner)))))
   (default-to u0
     (get allowance
          (map-get? allowances ((spender spender) (owner owner))))))
 )
 
 ;; Transfers tokens to a specified principal.
-(define-private (transfer (sender principal) (recipient principal) (amount uint))
+(define-private (transfer (amount uint) (sender principal) (recipient principal) )
   (match (ft-transfer? fungible-token amount sender recipient)
-    result (ok 'true)
-    error (err 'false))
+    result (ok true)
+    error (err false))
 )
 
 ;; Decrease allowance of a specified spender.
-(define-private (decrease-allowance (spender principal) (owner principal) (amount uint))
+(define-private (decrease-allowance (amount uint) (spender principal) (owner principal))
   (let ((allowance (allowance-of spender owner)))
     (if (or (> amount allowance) (<= amount u0))
-      'true
+      true
       (begin
         (map-set allowances
           ((spender spender) (owner owner))
           ((allowance (- allowance amount))))
-        'true))))
+        true))))
 
 ;; Internal - Increase allowance of a specified spender.
-(define-private (increase-allowance (spender principal) (owner principal) (amount uint))
+(define-private (increase-allowance (amount uint) (spender principal) (owner principal))
   (let ((allowance (allowance-of spender owner)))
     (if (<= amount u0)
-      'false
+      false
       (begin
-        (print (tuple (spender spender) (owner owner)))
-        (print (map-set allowances
+         (map-set allowances
           ((spender spender) (owner owner))
-          ((allowance (+ allowance amount)))))
-        'true))))
+          ((allowance (+ allowance amount))))
+        true))))
 
 ;; Public functions
 
 ;; Transfers tokens to a specified principal.
-(define-public (transfer-token (recipient principal) (amount uint))
-  (transfer tx-sender recipient amount)
+(define-public (transfer-token (amount uint) (recipient principal) )
+  (transfer amount tx-sender recipient)
 )
 
 ;; Transfers tokens to a specified principal, performed by a spender
-(define-public (transfer-from (owner principal) (recipient principal) (amount uint))
+(define-public (transfer-from (amount uint) (owner principal) (recipient principal) )
   (let ((allowance (allowance-of tx-sender owner)))
     (begin
       (if (or (> amount allowance) (<= amount u0))
-        (err 'false)
+        (err false)
         (if (and
-            (unwrap! (transfer owner recipient amount) (err 'false))
-            (decrease-allowance tx-sender owner amount))
-        (ok 'true)
-        (err 'false)))))
+            (unwrap! (transfer amount owner recipient) (err false))
+            (decrease-allowance amount tx-sender owner))
+        (ok true)
+        (err false)))))
 )
 
 ;; Update the allowance for a given spender
-(define-public (approve (spender principal) (amount uint))
+(define-public (approve (amount uint) (spender principal) )
   (if (and (> amount u0)
-           (print (increase-allowance spender tx-sender amount)))
+           (print (increase-allowance amount spender tx-sender )))
       (ok amount)
-      (err 'false)))
+      (err false)))
 
 ;; Revoke a given spender
 (define-public (revoke (spender principal))
   (let ((allowance (allowance-of spender tx-sender)))
     (if (and (> allowance u0)
-             (decrease-allowance spender tx-sender allowance))
+             (decrease-allowance allowance spender tx-sender))
         (ok 0)
-        (err 'false))))
+        (err false))))
 
 (define-public (balance-of (owner principal))
   (begin
@@ -115,9 +110,9 @@
   )
 )
 ;; Mint new tokens.
-(define-private (mint (account principal) (amount uint))
+(define-private (mint (amount uint) (account principal))
   (if (<= amount u0)
-      (err 'false)
+      (err false)
       (begin
         (var-set total-supply (+ (var-get total-supply) amount))
         (ft-mint? fungible-token amount account)
@@ -125,5 +120,5 @@
 
 ;; Initialize the contract
 (begin
-  (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M u20)
-  (mint 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9 u10))
+  (mint u20 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)
+  (mint u10 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9))

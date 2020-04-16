@@ -1,4 +1,4 @@
-(define-data-var licenser-address principal 'SZ2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKQ9H6DPR)
+(define-data-var licenser-address principal 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)
 
 (define-map licenses
   ((licensee principal))
@@ -33,9 +33,6 @@
   (to-int block-height)
 )
 
-(define-fungible-token stacks)
-
-
 (define-public (has-valid-license (licensee principal))
   (let ((
     when (get-block-height))
@@ -43,12 +40,12 @@
     (let ((license-type (default-to 0 (get type license)))
       (license-block (default-to 0 (get block license))))
       (if (is-eq license-type 0)
-        (ok 'false)
+        (ok false)
         (if (is-eq  license-type 1)
-          (ok 'true)
+          (ok true)
           (if (is-eq license-type 2)
             (ok (< when license-block))
-            (ok 'false)
+            (ok false)
           )
         )
       )
@@ -58,17 +55,17 @@
 
 (define-private (should-buy (type int) (duration int) (existing-type int) (existing-block int))
     (if (is-eq existing-type 1)
-    'false
-    (if (is-eq existing-type 2)
-      (if (is-eq type 1)
-        'true
-        (if (is-eq type 2)
-          (< existing-block (get-block-height))
-          'true
+      false
+      (if (is-eq existing-type 2)
+        (if (is-eq type 1)
+          true
+          (if (is-eq type 2)
+            (< existing-block (get-block-height))
+            true
+          )
         )
+        true
       )
-      'true
-    )
   )
 )
 
@@ -82,7 +79,7 @@
       (let
         ((buynow (match existing-license?
           license (print (should-buy type duration (get type license) (get block license)))
-          'true)))
+          true)))
         (if buynow
           (let ((transferred (stx-transfer? (to-uint license-price) tx-sender (get-licenser))))
             (if (is-ok transferred)
@@ -107,6 +104,6 @@
 )
 
 (begin
-  (map-insert price-list {type 1} {price 100})
-  (map-insert price-list {type 2} {price 1})
+  (map-insert price-list ((type 1)) ((price 100)))
+  (map-insert price-list ((type 2)) ((price 1)))
 )

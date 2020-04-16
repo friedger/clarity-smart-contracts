@@ -12,7 +12,8 @@
     "node": ">=13"
   },
   "scripts": {
-    "test": "mocha 'test/hodl/*.ts'"
+    "hodl": "mocha 'test/integration/hodl-token.ts'",
+    "test": "mocha 'test/unit/*.ts'"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -25,8 +26,8 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
-    "@blockstack/clarity": "^0.1.13-alpha.6",
-    "@blockstack/clarity-native-bin": "^0.1.13-alpha.6",
+    "@blockstack/clarity": "^0.1.13",
+    "@blockstack/clarity-native-bin": "^0.1.13",
     "bn.js": "^5.1.1"
   }
 }

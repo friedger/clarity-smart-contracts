@@ -1,13 +1,11 @@
 import { Provider, ProviderRegistry, Result } from "@blockstack/clarity";
 
-import { FungibleTokenClient } from "../../src/client/fungibleToken";
 import { LicenseClient } from "../../src/client/license";
 
 import { assert } from "chai";
 
 describe("oi license contract test suite", () => {
   let licenseClient: LicenseClient;
-  let tokenClient: FungibleTokenClient;
   let provider: Provider;
 
   const addresses = [
@@ -22,17 +20,11 @@ describe("oi license contract test suite", () => {
   before(async () => {
     provider = await ProviderRegistry.createProvider();
     licenseClient = new LicenseClient(provider);
-    tokenClient = new FungibleTokenClient(provider);
   });
 
   it("should have a valid syntax", async () => {
     await licenseClient.deployContract();
     await licenseClient.checkContract();
-  });
-
-  it("should use valid token", async () => {
-    await tokenClient.deployContract();
-    await tokenClient.checkContract();
   });
 
   describe("deployed contract tests", () => {
