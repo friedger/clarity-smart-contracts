@@ -29,6 +29,7 @@ describe("escrow contract test suite", async () => {
     const secretKeyBuyer = keysBuyer.secretKey;
     const secretKeySeller = keysSeller.secretKey;
 
+    console.log("deploy contract");
     var transaction = makeSmartContractDeploy(
       contractName,
       code,
@@ -39,7 +40,6 @@ describe("escrow contract test suite", async () => {
         version: TransactionVersion.Testnet,
       }
     );
-    console.log("deploy contract");
     var result = await transaction.broadcast(STACKS_API_URL);
     console.log(result);
 
