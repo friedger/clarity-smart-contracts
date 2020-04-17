@@ -23,6 +23,8 @@ describe("escrow contract test suite", async () => {
     const contractName = "escrow";
     const code = fs.readFileSync("./contracts/tokens/escrow.clar").toString();
 
+    const price = 0x10000;
+
     var feeRate = new BigNum(1280);
     const secretKeyBuyer = keysBuyer.secretKey;
     const secretKeySeller = keysSeller.secretKey;
@@ -50,7 +52,7 @@ describe("escrow contract test suite", async () => {
       contractAddress,
       contractName,
       "deposit",
-      [uintCV(62976)],
+      [uintCV(price)],
       feeRate,
       secretKeyBuyer,
       {
@@ -60,7 +62,7 @@ describe("escrow contract test suite", async () => {
           makeStandardSTXPostCondition(
             keysBuyer.stacksAddress,
             FungibleConditionCode.Equal,
-            new BigNum(62976)
+            new BigNum(price)
           ),
         ],
       }
@@ -103,7 +105,7 @@ describe("escrow contract test suite", async () => {
             contractAddress,
             "escrow",
             FungibleConditionCode.LessEqual,
-            new BigNum(62976)
+            new BigNum(price)
           ),
         ],
       }
