@@ -21,13 +21,26 @@ cargo build
 
 ## Configure Testnet
 
-Add stacks to the accounts in the `Stacks.toml` configuration file:
+Add stacks to the accounts in the `testnet/Stacks.toml` configuration file, accounts are defined in `keys.json` and `keys2.json`
 
 - for seller ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9: 0x100 fees
 - for buyer ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M: 0x700 fees + price
 
+In directory stacks-blockchain:
 ```
-vi Stacks.toml
+vi testnet/Stacks.toml
+```
+
+insert
+
+```
+[[mstx_balance]]
+address = "ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9" 
+amount = 256
+
+[[mstx_balance]]
+address = "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M" 
+amount = 67328
 ```
 
 If you want to use your own keys do something like this:
@@ -35,6 +48,17 @@ If you want to use your own keys do something like this:
 ```
 cargo run --bin blockstack-cli generate-sk > keys.json
 cargo run --bin blockstack-cli generate-sk > keys2.json
+```
+
+## Run Testnet
+In directory stacks-blockchain:
+```
+cargo testnet ./testnet/Stacks.toml
+```
+
+If you want to get rid of the extra log outputs you can redirect them into a file:
+```
+cargo testnet ./testnet/Stacks.toml 2>log_debug.txt
 ```
 
 ## Stacks Transaction library for Javascript
@@ -64,7 +88,6 @@ yarn link @blockstack/stacks-transactions
 ```
 
 Finally, run the sequence of transactions that are defined in the integration test script (`mocha` test):
-
 ```
 yarn escrow
 ```
@@ -75,3 +98,5 @@ The test script contains calls of the following methods defined in the stacks-tr
 - `makeContractCall`
 - `makeStandardSTXPostCondition`
 - `makeContractSTXPostCondition`
+
+The buyer will deploy the contract, wait 10 seconds, deposit 65536 mSTXs. Then the seller will accept the deal. After another 10 seconds, the buyer will accept the deal and the price STXs will be transferred to the seller.
