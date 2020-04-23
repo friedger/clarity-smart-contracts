@@ -67,14 +67,20 @@ We want to use a feature branch of the stacks transaction library, therefore we 
 
 ```
 cd ..
-git clone git@github.com:blockstack/stacks-blockchain.git
+git clone git@github.com:blockstack/stacks-transactions-js.git
 cd stacks-transactions-js
 git checkout feature/tx-broadcast
+
 yarn
 yarn build
 yarn link
 ```
 
+In case git checkout fails, try this:
+```
+git checkout -b feature/tx-broadcast
+git pull origin feature/tx-broadcast
+```
 ## Use Escrow Smart Contracts
 
 For the online deal we want to use the escrow contract:
