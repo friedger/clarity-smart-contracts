@@ -6,6 +6,7 @@ import {
   TransactionVersion,
   FungibleConditionCode,
   standardPrincipalCV,
+  ChainID,
 } from "@blockstack/stacks-transactions";
 import { makeStandardSTXPostCondition } from "@blockstack/stacks-transactions/lib/src/builders";
 
@@ -31,13 +32,14 @@ describe("oi license contract test suite", async () => {
       {
         nonce: new BigNum(0),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
       }
     );
     fs.writeFileSync("mempool/tx1.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
-    console.log(result);
 
-    await new Promise((r) => setTimeout(r, 10000));
+    // var result = await transaction.broadcast(STACKS_API_URL);
+    // console.log(result);
+    // await new Promise((r) => setTimeout(r, 10000));
 
     var contractAddress = keys.stacksAddress;
     var functionName = "buy-non-expiring";
@@ -53,6 +55,7 @@ describe("oi license contract test suite", async () => {
       {
         nonce: new BigNum(0),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
         postConditions: [
           makeStandardSTXPostCondition(
             keys2.stacksAddress,
@@ -64,8 +67,8 @@ describe("oi license contract test suite", async () => {
     );
 
     fs.writeFileSync("mempool/tx2.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
-    console.log(result);
+    // var result = await transaction.broadcast(STACKS_API_URL);
+    // console.log(result);
 
     await new Promise((r) => setTimeout(r, 10000));
 
@@ -82,11 +85,12 @@ describe("oi license contract test suite", async () => {
       {
         nonce: new BigNum(1),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
       }
     );
 
     fs.writeFileSync("mempool/tx3.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
-    console.log(result);
+    // var result = await transaction.broadcast(STACKS_API_URL);
+    //console.log(result);
   });
 });

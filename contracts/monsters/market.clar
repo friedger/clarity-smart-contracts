@@ -1,0 +1,27 @@
+(define-map offers ((owner principal) (monster-id uint))
+  ((price uint))
+)
+
+(define-constant err-invalid-offer-key u1)
+(define-constant err-payment-failed u2)
+(define-constant err-transfer-failed u3)
+
+(define-public (bid (monster-id uint) (price uint))
+  (ok (map-insert offers {owner tx-sender monster-id monster-id} {price price}))
+)
+
+(define-public (accept (monster-id uint) (owner principal))
+  (match (map-get? offers {owner owner monster-id monster-id})
+    offer (match (stx-transfer?  (get price offer) tx-sender owner)
+      success (match (contract-call? .monster transfer monster-id owner)
+          transferred (begin
+            (map-delete offers {owner owner monster-id monster-id})
+            (ok true)
+          )
+          error (err err-transfer-failed)
+      )
+      error (err err-payment-failed)
+    )
+    (err err-invalid-offer-key)
+  )
+)

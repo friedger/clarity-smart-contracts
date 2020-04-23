@@ -16,7 +16,8 @@
     "test": "mocha 'test/unit/*.ts'",
     "license": "mocha 'test/integration/license.ts'",
     "escrow": "mocha 'test/integration/escrow.ts'",
-    "fungible": "mocha 'test/integration/fungible-token.ts'"
+    "fungible": "mocha 'test/integration/fungible-token.ts'",
+    "monsters": "mocha 'test/integration/monsters.ts'"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -31,6 +32,7 @@
   "dependencies": {
     "@blockstack/clarity": "^0.1.13",
     "@blockstack/clarity-native-bin": "^0.1.13",
-    "bn.js": "^5.1.1"
+    "bn.js": "^5.1.1",
+    "fetch-node": "^0.0.1"
   }
 }
