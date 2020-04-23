@@ -6,13 +6,14 @@ import {
   TransactionVersion,
   FungibleConditionCode,
   uintCV,
+  ChainID,
 } from "@blockstack/stacks-transactions";
 import {
   makeStandardSTXPostCondition,
   makeContractSTXPostCondition,
 } from "@blockstack/stacks-transactions/lib/src/builders";
 
-const STACKS_API_URL = "http://127.0.0.1:9000/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
 
 describe("escrow contract test suite", async () => {
   it("should deposit and payout balance", async () => {
@@ -38,6 +39,7 @@ describe("escrow contract test suite", async () => {
       {
         nonce: new BigNum(0),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
       }
     );
     var result = await transaction.broadcast(STACKS_API_URL);
@@ -58,6 +60,7 @@ describe("escrow contract test suite", async () => {
       {
         nonce: new BigNum(1),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
         postConditions: [
           makeStandardSTXPostCondition(
             keysBuyer.stacksAddress,
@@ -81,6 +84,7 @@ describe("escrow contract test suite", async () => {
       {
         nonce: new BigNum(0),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
       }
     );
 
@@ -100,6 +104,7 @@ describe("escrow contract test suite", async () => {
       {
         nonce: new BigNum(2),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
         postConditions: [
           makeContractSTXPostCondition(
             contractAddress,
