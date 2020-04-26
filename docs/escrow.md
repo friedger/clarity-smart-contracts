@@ -87,3 +87,7 @@ The test script contains calls of the following methods defined in the stacks-tr
 - `makeContractSTXPostCondition`
 
 The buyer will deploy the contract, wait 10 seconds, deposit 65536 mSTXs. Then the seller will accept the deal. After another 10 seconds, the buyer will accept the deal and the price STXs will be transferred to the seller.
+
+While the testnet is still running, you can check the balance of the buyer and the seller at
+* [http://127.0.0.1:20443/v2/accounts/ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M](http://127.0.0.1:20443/v2/accounts/ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)
+* [http://127.0.0.1:20443/v2/accounts/ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9](http://127.0.0.1:20443/v2/accounts/ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9)
