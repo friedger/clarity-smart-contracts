@@ -13,7 +13,7 @@ import {
   makeContractSTXPostCondition,
 } from "@blockstack/stacks-transactions/lib/src/builders";
 
-const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
+const STACKS_API_URL = "http://localhost:20443/v2/transactions";
 
 describe("escrow contract test suite", async () => {
   it("should deposit and payout balance", async () => {
@@ -24,7 +24,7 @@ describe("escrow contract test suite", async () => {
     const contractName = "escrow";
     const code = fs.readFileSync("./contracts/tokens/escrow.clar").toString();
 
-    const price = 0x10000;
+    const price = 0x1000;
 
     var feeRate = new BigNum(1280);
     const secretKeyBuyer = keysBuyer.secretKey;
@@ -44,8 +44,7 @@ describe("escrow contract test suite", async () => {
     );
     var result = await transaction.broadcast(STACKS_API_URL);
     console.log(result);
-
-    await new Promise((r) => setTimeout(r, 10000));
+    await new Promise((r) => setTimeout(r, 20000));
 
     console.log("deposit");
     feeRate = new BigNum(256);
@@ -88,10 +87,9 @@ describe("escrow contract test suite", async () => {
       }
     );
 
-    var result = await transaction.broadcast(STACKS_API_URL);
-    console.log(result);
-
-    await new Promise((r) => setTimeout(r, 10000));
+    //var result = await transaction.broadcast(STACKS_API_URL);
+    //console.log(result);
+    //await new Promise((r) => setTimeout(r, 10000));
 
     console.log("accept buyer");
     transaction = makeContractCall(
@@ -102,7 +100,7 @@ describe("escrow contract test suite", async () => {
       feeRate,
       secretKeyBuyer,
       {
-        nonce: new BigNum(2),
+        nonce: new BigNum(3),
         version: TransactionVersion.Testnet,
         chainId: ChainID.Testnet,
         postConditions: [
@@ -115,7 +113,7 @@ describe("escrow contract test suite", async () => {
         ],
       }
     );
-    result = await transaction.broadcast(STACKS_API_URL);
-    console.log(result);
+    // var result = await transaction.broadcast(STACKS_API_URL);
+    // console.log(result);
   });
 });

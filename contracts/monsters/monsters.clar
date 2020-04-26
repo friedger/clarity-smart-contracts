@@ -11,6 +11,7 @@
 (define-constant err-monster-exists u2)
 (define-constant err-monster-died u3)
 (define-constant err-transfer-not-allowed u4)
+(define-constant err-transfer-failed u5)
 
 (define-private (is-last-meal-young (last-meal uint))
   (> (to-int last-meal) (to-int (- burn-block-height hunger-tolerance)))
@@ -52,8 +53,11 @@
 
 (define-public (transfer ((monster-id uint) (receipient principal)))
   (let ((owner (unwrap! (owner-of? monster-id) (err err-monster-unborn))))
-    (if (eq owner tx-sender)
-      (nft-transfer? nft-monsters monster-id tx-sender recipient)
+    (if (is-eq owner tx-sender)
+      (match (nft-transfer? nft-monsters monster-id tx-sender recipient)
+        success (ok 1)
+        (err err-transfer-failed)
+      )
       (err err-transfer-not-allowed)
     )
   )

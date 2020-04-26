@@ -10,7 +10,7 @@ import {
 } from "@blockstack/stacks-transactions";
 import { makeStandardSTXPostCondition } from "@blockstack/stacks-transactions/lib/src/builders";
 
-const STACKS_API_URL = "http://127.0.0.1:9000/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
 
 describe("oi license contract test suite", async () => {
   it("should buy a non-expiring license", async () => {
@@ -37,9 +37,9 @@ describe("oi license contract test suite", async () => {
     );
     fs.writeFileSync("mempool/tx1.bin", transaction.serialize());
 
-    // var result = await transaction.broadcast(STACKS_API_URL);
-    // console.log(result);
-    // await new Promise((r) => setTimeout(r, 10000));
+    var result = await transaction.broadcast(STACKS_API_URL);
+    console.log(result);
+    await new Promise((r) => setTimeout(r, 10000));
 
     var contractAddress = keys.stacksAddress;
     var functionName = "buy-non-expiring";
@@ -67,8 +67,8 @@ describe("oi license contract test suite", async () => {
     );
 
     fs.writeFileSync("mempool/tx2.bin", transaction.serialize());
-    // var result = await transaction.broadcast(STACKS_API_URL);
-    // console.log(result);
+    var result = await transaction.broadcast(STACKS_API_URL);
+    console.log(result);
 
     await new Promise((r) => setTimeout(r, 10000));
 
@@ -90,7 +90,7 @@ describe("oi license contract test suite", async () => {
     );
 
     fs.writeFileSync("mempool/tx3.bin", transaction.serialize());
-    // var result = await transaction.broadcast(STACKS_API_URL);
-    //console.log(result);
+    var result = await transaction.broadcast(STACKS_API_URL);
+    console.log(result);
   });
 });

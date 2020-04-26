@@ -4,17 +4,11 @@ import {
   makeSmartContractDeploy,
   makeContractCall,
   TransactionVersion,
-  FungibleConditionCode,
   bufferCV,
-  DEFAULT_CHAIN_ID,
+  ChainID,
 } from "@blockstack/stacks-transactions";
-import {
-  makeStandardSTXPostCondition,
-  makeContractSTXPostCondition,
-} from "@blockstack/stacks-transactions/lib/src/builders";
-import { broadcast } from "./broadcast";
 
-const STACKS_API_URL = "http://127.0.0.1:9000/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
 
 describe("monster contract test suite", async () => {
   it("should create and feed a monster", async () => {
@@ -33,16 +27,16 @@ describe("monster contract test suite", async () => {
     var transaction = makeSmartContractDeploy(
       contractName,
       code,
-      new BigNum(1280),
+      new BigNum(2139),
       secretKey,
       {
         nonce: new BigNum(0),
         version: TransactionVersion.Testnet,
-        chainId: 2147483648,
+        chainId: ChainID.Testnet,
       }
     );
     console.log("deploy contract");
-    var result = await broadcast(transaction);
+    var result = await transaction.broadcast(STACKS_API_URL);
     console.log(result);
 
     await new Promise((r) => setTimeout(r, 10000));
@@ -59,6 +53,7 @@ describe("monster contract test suite", async () => {
       {
         nonce: new BigNum(1),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
       }
     );
     var result = await transaction.broadcast(STACKS_API_URL);
@@ -75,6 +70,7 @@ describe("monster contract test suite", async () => {
       {
         nonce: new BigNum(0),
         version: TransactionVersion.Testnet,
+        chainId: ChainID.Testnet,
       }
     );
 
