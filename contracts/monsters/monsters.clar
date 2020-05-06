@@ -22,10 +22,10 @@
       (if (is-ok (nft-mint? nft-monsters monster-id tx-sender))
         (begin
           (var-set next-id (+ monster-id u1))
-          (map-set monsters {monster-id monster-id}
+          (map-set monsters {monster-id: monster-id}
           {
-            name name
-            last-meal burn-block-height
+            name: name,
+            last-meal: burn-block-height
           })
           (ok monster-id)
         )
@@ -35,13 +35,13 @@
 )
 
 (define-public (feed-monster (monster-id uint))
-  (match (map-get? monsters {monster-id monster-id})
+  (match (map-get? monsters {monster-id: monster-id})
     monster (begin
         (if (is-last-meal-young (get last-meal monster))
           (begin
-            (map-set monsters {monster-id monster-id} {
-              name (get name monster)
-              last-meal burn-block-height})
+            (map-set monsters {monster-id: monster-id} {
+              name: (get name monster),
+              last-meal: burn-block-height})
             (ok burn-block-height)
           )
           (err err-monster-died)
@@ -51,24 +51,25 @@
   )
 )
 
-(define-public (transfer ((monster-id uint) (receipient principal)))
+
+(define-read-only (owner-of? (monster-id uint))
+  (nft-get-owner? nft-monsters monster-id)
+)
+
+(define-public (transfer (monster-id uint) (recipient principal))
   (let ((owner (unwrap! (owner-of? monster-id) (err err-monster-unborn))))
     (if (is-eq owner tx-sender)
       (match (nft-transfer? nft-monsters monster-id tx-sender recipient)
         success (ok 1)
-        (err err-transfer-failed)
+        error (err err-transfer-failed)
       )
       (err err-transfer-not-allowed)
     )
   )
 )
 
-(define-read-only (owner-of? (monster-id uint))
-  (nft-get-owner? nft-monsters monster-id)
-)
-
 (define-read-only (is-alive (monster-id uint))
-  (match (map-get? monsters {monster-id monster-id})
+  (match (map-get? monsters {monster-id: monster-id})
     monster (ok (is-last-meal-young (get last-meal monster)))
     (err err-monster-unborn)
   )

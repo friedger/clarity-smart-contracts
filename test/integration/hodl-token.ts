@@ -3,18 +3,17 @@ import * as fs from "fs";
 import {
   makeSmartContractDeploy,
   makeContractCall,
-  TransactionVersion,
   FungibleConditionCode,
   standardPrincipalCV,
-  AssetInfo,
   uintCV,
-} from "@blockstack/stacks-transactions";
-import {
   makeStandardFungiblePostCondition,
   makeContractFungiblePostCondition,
-} from "@blockstack/stacks-transactions/lib/src/builders";
+  StacksTestnet,
+  broadcastTransaction,
+  createAssetInfo,
+} from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://127.0.0.1:9000/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
 
 describe("hold token test suite", async () => {
   it("should buy and hold tokens", async () => {
@@ -22,115 +21,111 @@ describe("hold token test suite", async () => {
     let secretKey = keys.secretKey;
     let keys2 = JSON.parse(fs.readFileSync("./keys2.json").toString());
     let secretKey2 = keys2.secretKey;
+    const network = new StacksTestnet();
+    network.broadcastApiUrl = STACKS_API_URL;
 
     let contractName = "hodl-token";
     var contractAddress = keys.stacksAddress;
 
-    let code = fs.readFileSync("./contracts/tokens/hodl-token.clar").toString();
+    let codeBody = fs
+      .readFileSync("./contracts/tokens/hodl-token.clar")
+      .toString();
 
-    let feeRate = new BigNum(2000);
+    let fee = new BigNum(2000);
 
-    let transaction = makeSmartContractDeploy(
+    let transaction = await makeSmartContractDeploy({
       contractName,
-      code,
-      feeRate,
-      secretKey,
-      {
-        nonce: new BigNum(0),
-        version: TransactionVersion.Testnet,
-      }
-    );
+      codeBody,
+      fee,
+      senderKey: secretKey,
+      nonce: new BigNum(0),
+      network,
+    });
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx1.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
+    var result = await broadcastTransaction(transaction, network);
     console.log(result);
 
     await new Promise((r) => setTimeout(r, 10000));
 
-    transaction = makeContractCall(
+    transaction = await makeContractCall({
       contractAddress,
       contractName,
-      "hodl",
-      [uintCV(5)],
-      feeRate,
-      secretKey,
-      {
-        nonce: new BigNum(1),
-        version: TransactionVersion.Testnet,
-        postConditions: [
-          makeContractFungiblePostCondition(
-            "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M",
-            "hodl-token",
-            FungibleConditionCode.Equal,
-            new BigNum(5),
-            new AssetInfo(contractAddress, "hodl-token", "hodl-token")
-          ),
-          makeStandardFungiblePostCondition(
-            contractAddress,
-            FungibleConditionCode.Equal,
-            new BigNum(5),
-            new AssetInfo(contractAddress, "hodl-token", "spendable-token")
-          ),
-        ],
-      }
-    );
+      functionName: "hodl",
+      functionArgs: [uintCV(5)],
+      fee,
+      senderKey: secretKey,
+      nonce: new BigNum(1),
+      network,
+      postConditions: [
+        makeContractFungiblePostCondition(
+          "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M",
+          "hodl-token",
+          FungibleConditionCode.Equal,
+          new BigNum(5),
+          createAssetInfo(contractAddress, "hodl-token", "hodl-token")
+        ),
+        makeStandardFungiblePostCondition(
+          contractAddress,
+          FungibleConditionCode.Equal,
+          new BigNum(5),
+          createAssetInfo(contractAddress, "hodl-token", "spendable-token")
+        ),
+      ],
+    });
 
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx2.bin", transaction.serialize());
-    result = await transaction.broadcast(STACKS_API_URL);
+    result = await broadcastTransaction(transaction, network);
     console.log(result);
 
     await new Promise((r) => setTimeout(r, 10000));
 
-    transaction = makeContractCall(
+    transaction = await makeContractCall({
       contractAddress,
       contractName,
-      "hodl-balance-of",
-      [standardPrincipalCV(keys.stacksAddress)],
-      feeRate,
-      secretKey2,
-      {
-        nonce: new BigNum(0),
-        version: TransactionVersion.Testnet,
-      }
-    );
+      functionName: "hodl-balance-of",
+      functionArgs: [standardPrincipalCV(keys.stacksAddress)],
+      fee,
+      senderKey: secretKey2,
+      nonce: new BigNum(0),
+      network,
+    });
 
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx3.bin", transaction.serialize());
-    result = await transaction.broadcast(STACKS_API_URL);
+    result = await broadcastTransaction(transaction, network);
     console.log(result);
 
-    transaction = makeContractCall(
+    transaction = await makeContractCall({
       contractAddress,
       contractName,
-      "unhodl",
-      [uintCV(3)],
-      feeRate,
-      secretKey,
-      {
-        nonce: new BigNum(2),
-        version: TransactionVersion.Testnet,
-        postConditions: [
-          makeContractFungiblePostCondition(
-            "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M",
-            "hodl-token",
-            FungibleConditionCode.Equal,
-            new BigNum(3),
-            new AssetInfo(contractAddress, "hodl-token", "spendable-token")
-          ),
-          makeStandardFungiblePostCondition(
-            contractAddress,
-            FungibleConditionCode.Equal,
-            new BigNum(3),
-            new AssetInfo(contractAddress, "hodl-token", "hodl-token")
-          ),
-        ],
-      }
-    );
+      functionName: "unhodl",
+      functionArgs: [uintCV(3)],
+      fee,
+      senderKey: secretKey,
+      nonce: new BigNum(2),
+      network,
+      postConditions: [
+        makeContractFungiblePostCondition(
+          "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M",
+          "hodl-token",
+          FungibleConditionCode.Equal,
+          new BigNum(3),
+          createAssetInfo(contractAddress, "hodl-token", "spendable-token")
+        ),
+        makeStandardFungiblePostCondition(
+          contractAddress,
+          FungibleConditionCode.Equal,
+          new BigNum(3),
+          createAssetInfo(contractAddress, "hodl-token", "hodl-token")
+        ),
+      ],
+    });
 
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx4.bin", transaction.serialize());
-    result = await transaction.broadcast(STACKS_API_URL);
+    result = await broadcastTransaction(transaction, network);
     console.log(result);
   });
 });

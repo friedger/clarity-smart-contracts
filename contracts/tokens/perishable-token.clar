@@ -20,9 +20,8 @@
       (if (is-ok (nft-mint? perishable-token token-id tx-sender))
         (begin
           (var-set next-id (+ token-id u1))
-          (map-set tokens {token-id token-id} {
-            last-tick burn-block-height
-          })
+          (map-set tokens {token-id : token-id}
+          {last-tick : burn-block-height})
           (ok token-id)
         )
         (err err-token-exists)
@@ -31,12 +30,12 @@
 )
 
 (define-public (tick (token-id uint))
-  (match (map-get? tokens {token-id token-id})
+  (match (map-get? tokens {token-id : token-id})
     token (begin
         (if (is-last-tick-young (get last-tick token))
           (begin
-            (map-set tokens {token-id token-id} {
-              last-tick burn-block-height})
+            (map-set tokens {token-id : token-id} {
+              last-tick: burn-block-height})
             (ok burn-block-height)
           )
           (err err-token-perished)
@@ -51,7 +50,7 @@
 )
 
 (define-read-only (perished (token-id uint))
-  (match (map-get? tokens {token-id token-id})
+  (match (map-get? tokens {token-id: token-id})
     monster (ok (not (is-last-tick-young (get last-tick monster))))
     (err err-invalid-token-id)
   )

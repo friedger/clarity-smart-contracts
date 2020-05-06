@@ -32,7 +32,7 @@
   "dependencies": {
     "@blockstack/clarity": "^0.1.13",
     "@blockstack/clarity-native-bin": "^0.1.13",
-    "@blockstack/stacks-transactions": "^0.3.0-alpha.5",
+    "@blockstack/stacks-transactions": "^0.4.0",
     "bn.js": "^5.1.1"
   }
 }

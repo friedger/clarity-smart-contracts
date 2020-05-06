@@ -3,12 +3,12 @@ import * as fs from "fs";
 import {
   makeSmartContractDeploy,
   makeContractCall,
-  TransactionVersion,
   FungibleConditionCode,
   standardPrincipalCV,
-  ChainID,
+  StacksTestnet,
+  broadcastTransaction,
+  makeStandardSTXPostCondition,
 } from "@blockstack/stacks-transactions";
-import { makeStandardSTXPostCondition } from "@blockstack/stacks-transactions/lib/src/builders";
 
 const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
 
@@ -16,28 +16,28 @@ describe("oi license contract test suite", async () => {
   it("should buy a non-expiring license", async () => {
     let keys = JSON.parse(fs.readFileSync("./keys.json").toString());
     let keys2 = JSON.parse(fs.readFileSync("./keys2.json").toString());
-
+    const network = new StacksTestnet();
+    network.broadcastApiUrl = STACKS_API_URL;
     let contractName = "oi-license";
-    let code = fs.readFileSync("./contracts/license/license.clar").toString();
+    let codeBody = fs
+      .readFileSync("./contracts/license/license.clar")
+      .toString();
 
-    let feeRate = new BigNum(3000);
+    let fee = new BigNum(3000);
     let secretKey = keys.secretKey;
     let secretKey2 = keys2.secretKey;
 
-    let transaction = makeSmartContractDeploy(
+    let transaction = await makeSmartContractDeploy({
       contractName,
-      code,
-      feeRate,
-      secretKey,
-      {
-        nonce: new BigNum(0),
-        version: TransactionVersion.Testnet,
-        chainId: ChainID.Testnet,
-      }
-    );
+      codeBody,
+      fee,
+      senderKey: secretKey,
+      nonce: new BigNum(0),
+      network,
+    });
     fs.writeFileSync("mempool/tx1.bin", transaction.serialize());
 
-    var result = await transaction.broadcast(STACKS_API_URL);
+    var result = await broadcastTransaction(transaction, network);
     console.log(result);
     await new Promise((r) => setTimeout(r, 10000));
 
@@ -45,29 +45,26 @@ describe("oi license contract test suite", async () => {
     var functionName = "buy-non-expiring";
     var functionArgs = [];
 
-    transaction = makeContractCall(
+    transaction = await makeContractCall({
       contractAddress,
       contractName,
       functionName,
       functionArgs,
-      feeRate,
-      secretKey2,
-      {
-        nonce: new BigNum(0),
-        version: TransactionVersion.Testnet,
-        chainId: ChainID.Testnet,
-        postConditions: [
-          makeStandardSTXPostCondition(
-            keys2.stacksAddress,
-            FungibleConditionCode.GreaterEqual,
-            new BigNum(55)
-          ),
-        ],
-      }
-    );
+      fee,
+      senderKey: secretKey2,
+      nonce: new BigNum(0),
+      network,
+      postConditions: [
+        makeStandardSTXPostCondition(
+          keys2.stacksAddress,
+          FungibleConditionCode.GreaterEqual,
+          new BigNum(55)
+        ),
+      ],
+    });
 
     fs.writeFileSync("mempool/tx2.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
+    var result = await broadcastTransaction(transaction, network);
     console.log(result);
 
     await new Promise((r) => setTimeout(r, 10000));
@@ -75,22 +72,19 @@ describe("oi license contract test suite", async () => {
     functionName = "has-valid-license";
     functionArgs = [standardPrincipalCV(keys2.stacksAddress)];
 
-    transaction = makeContractCall(
+    transaction = await makeContractCall({
       contractAddress,
       contractName,
       functionName,
       functionArgs,
-      feeRate,
-      secretKey,
-      {
-        nonce: new BigNum(1),
-        version: TransactionVersion.Testnet,
-        chainId: ChainID.Testnet,
-      }
-    );
+      fee,
+      senderKey: secretKey,
+      nonce: new BigNum(1),
+      network,
+    });
 
     fs.writeFileSync("mempool/tx3.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
+    var result = await broadcastTransaction(transaction, network);
     console.log(result);
   });
 });

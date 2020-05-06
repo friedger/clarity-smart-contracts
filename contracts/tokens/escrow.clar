@@ -6,11 +6,11 @@
 (define-data-var balance uint u0)
 
 (define-read-only (get-info)
-  {balance (var-get balance) buyerOk (var-get buyerOk) sellerOk (var-get sellerOk)}
+  {balance: (var-get balance), buyerOk: (var-get buyerOk), sellerOk: (var-get sellerOk)}
 )
 
 (define-private (payout-balance)
-  (unwarp-panic (as-contract (stx-transfer? (var-get balance) escrow seller)))
+  (unwrap-panic (as-contract (stx-transfer? (var-get balance) escrow seller)))
 )
 
 (define-public (accept)
@@ -29,7 +29,7 @@
       )
     )
     (if (and (var-get buyerOk) (var-get sellerOk))
-      (payout-balance)
+      (ok (payout-balance))
       (ok true)
     )
   )

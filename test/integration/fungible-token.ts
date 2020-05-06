@@ -8,10 +8,13 @@ import {
   standardPrincipalCV,
   AssetInfo,
   uintCV,
+  StacksTestnet,
+  broadcastTransaction,
+  makeStandardFungiblePostCondition,
+  createAssetInfo,
 } from "@blockstack/stacks-transactions";
-import { makeStandardFungiblePostCondition } from "@blockstack/stacks-transactions/lib/src/builders";
 
-const STACKS_API_URL = "http://127.0.0.1:9000/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
 
 describe("fungible token test suite", async () => {
   it("should buy and hold tokens", async () => {
@@ -20,26 +23,27 @@ describe("fungible token test suite", async () => {
     let keys2 = JSON.parse(fs.readFileSync("./keys2.json").toString());
     let secretKey2 = keys2.secretKey;
 
+    const network = new StacksTestnet();
+    network.broadcastApiUrl = STACKS_API_URL;
+
     let contractName = "fungible-token";
-    let code = fs
+    let codeBody = fs
       .readFileSync("./contracts/tokens/fungible-token.clar")
       .toString();
 
-    let feeRate = new BigNum(5000);
+    let fee = new BigNum(5000);
 
-    let transaction = makeSmartContractDeploy(
+    let transaction = await makeSmartContractDeploy({
       contractName,
-      code,
-      feeRate,
-      secretKey,
-      {
-        nonce: new BigNum(0),
-        version: TransactionVersion.Testnet,
-      }
-    );
+      codeBody,
+      fee,
+      senderKey: secretKey,
+      nonce: new BigNum(0),
+      network,
+    });
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx1.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
+    var result = await broadcastTransaction(transaction, network);
     console.log(result);
 
     await new Promise((r) => setTimeout(r, 10000));
@@ -48,49 +52,45 @@ describe("fungible token test suite", async () => {
     var functionName = "transfer-token";
     var functionArgs = [uintCV(5), standardPrincipalCV(keys2.stacksAddress)];
 
-    transaction = makeContractCall(
+    transaction = await makeContractCall({
       contractAddress,
       contractName,
       functionName,
       functionArgs,
-      feeRate,
-      secretKey,
-      {
-        nonce: new BigNum(1),
-        version: TransactionVersion.Testnet,
-        postConditions: [
-          makeStandardFungiblePostCondition(
-            keys.stacksAddress,
-            FungibleConditionCode.Equal,
-            new BigNum(5),
-            new AssetInfo(contractAddress, contractName, "fungible-token")
-          ),
-        ],
-      }
-    );
+      fee,
+      senderKey: secretKey,
+      nonce: new BigNum(1),
+      network,
+      postConditions: [
+        makeStandardFungiblePostCondition(
+          keys.stacksAddress,
+          FungibleConditionCode.Equal,
+          new BigNum(5),
+          createAssetInfo(contractAddress, contractName, "fungible-token")
+        ),
+      ],
+    });
 
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx2.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
+    var result = await broadcastTransaction(transaction, network);
 
     await new Promise((r) => setTimeout(r, 10000));
 
-    transaction = makeContractCall(
+    transaction = await makeContractCall({
       contractAddress,
       contractName,
-      "balance-of",
-      [standardPrincipalCV(keys.stacksAddress)],
-      feeRate,
-      secretKey2,
-      {
-        nonce: new BigNum(0),
-        version: TransactionVersion.Testnet,
-      }
-    );
+      functionName: "balance-of",
+      functionArgs: [standardPrincipalCV(keys.stacksAddress)],
+      fee,
+      senderKey: secretKey2,
+      nonce: new BigNum(0),
+      network,
+    });
 
     console.log(transaction.serialize().toString("hex"));
     fs.writeFileSync("mempool/tx3.bin", transaction.serialize());
-    var result = await transaction.broadcast(STACKS_API_URL);
+    var result = await broadcastTransaction(transaction, network);
     console.log(result);
   });
 });
