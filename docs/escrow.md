@@ -9,9 +9,9 @@ Let's imagine you want to buy a raspberry pi from an online shop you know vaguel
 1. Wait until the seller agrees to the deal (`accept`) and sends you the pi
 1. Confirm the reception of the pi (`accept`)
 
-## Setup Testnet
+## Setup Mocknet
 
-As the demo is about the testnet here is how to set it up:
+As the demo is about the testnet in mocknet mode (local mining without p2p) here is how to set it up:
 
 ```
 git clone https://github.com/blockstack/stacks-blockchain.git
@@ -19,9 +19,9 @@ cd stacks-blockchain
 cargo testnet mocknet
 ```
 
-## Configure Testnet
+## Configure Mocknet
 
-Add stacks to the accounts in the `testnet/Stacks.toml` configuration file, accounts are defined in `keys.json` and `keys2.json`
+Add stacks to the accounts in the `testnet/stacks-node/Stacks.toml` configuration file, accounts are defined in `keys.json` and `keys2.json`
 
 - for seller ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9: 0x100 fees
 - for buyer ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M: 0x700 fees + price
@@ -29,7 +29,7 @@ Add stacks to the accounts in the `testnet/Stacks.toml` configuration file, acco
 In directory **stacks-blockchain**:
 
 ```
-vi testnet/Stacks.toml
+vi testnet/stacks-node/Stacks.toml
 ```
 
 insert
@@ -51,12 +51,12 @@ cargo run --bin blockstack-cli generate-sk > keys.json
 cargo run --bin blockstack-cli generate-sk > keys2.json
 ```
 
-## Run Testnet
+## Run Mocknet
 
 In directory **stacks-blockchain**:
 
 ```
-cargo testnet start --config=./testnet/Stacks.toml
+cargo testnet start --config=./testnet/stacks-node/Stacks.toml
 ```
 
 ## Use Escrow Smart Contracts
