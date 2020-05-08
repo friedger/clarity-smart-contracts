@@ -71,7 +71,7 @@ cd clarity-smart-contracts
 yarn
 ```
 
-The demo was tested with **version 0.3.0-alpha.5** of `@blockstack/stacks-transaction` library.
+The demo was tested with **version 0.4.0** of `@blockstack/stacks-transaction` library.
 
 Finally, run the sequence of transactions that are defined in the integration test script (`mocha` test):
 
