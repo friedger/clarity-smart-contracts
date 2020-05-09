@@ -9,9 +9,17 @@ Let's imagine you want to buy a raspberry pi from an online shop you know vaguel
 1. Wait until the seller agrees to the deal (`accept`) and sends you the pi
 1. Confirm the reception of the pi (`accept`)
 
-## Setup Mocknet
+## Testnet in mocknet mode
 
-As the demo is about the testnet in mocknet mode (local mining without p2p) here is how to set it up:
+The demo can be run in
+
+- mocknet mode
+- helium node (not yet tested)
+- neon mode
+
+### Setup Mocknet
+
+The testnet in mocknet mode (local mining without p2p) should be set it up as follows:
 
 ```
 git clone https://github.com/blockstack/stacks-blockchain.git
@@ -19,12 +27,12 @@ cd stacks-blockchain
 cargo testnet mocknet
 ```
 
-## Configure Mocknet
+### Configure Mocknet
 
 Add stacks to the accounts in the `testnet/stacks-node/Stacks.toml` configuration file, accounts are defined in `keys.json` and `keys2.json`
 
 - for seller ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9: 0x100 fees
-- for buyer ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M: 0x700 fees + price
+- for buyer ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M: 0x800 fees + price
 
 In directory **stacks-blockchain**:
 
@@ -41,7 +49,7 @@ amount = 256
 
 [[mstx_balance]]
 address = "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M"
-amount = 67328
+amount = 67584
 ```
 
 If you want to use your own keys do something like this:
@@ -51,13 +59,38 @@ cargo run --bin blockstack-cli generate-sk > keys.json
 cargo run --bin blockstack-cli generate-sk > keys2.json
 ```
 
-## Run Mocknet
+### Run Mocknet
 
 In directory **stacks-blockchain**:
 
 ```
 cargo testnet start --config=./testnet/stacks-node/Stacks.toml
 ```
+
+Continue below with "Use Escrow Smart Contracts"
+
+## Testnet in Neo mode
+
+### Setup Neon testnet
+
+The testnet in neon mode (mining on one dedicated remote node) should be set it up as follows:
+
+```
+git clone https://github.com/blockstack/stacks-blockchain.git
+cd stacks-blockchain
+cargo testnet neon
+```
+
+### Verify Balances
+
+The demo uses hard coded STX addresses, all users of this demo use the same addresses and keys.
+
+Verify the balances at
+
+- [http://127.0.0.1:20443/v2/accounts/ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M](http://127.0.0.1:20443/v2/accounts/ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)
+- [http://127.0.0.1:20443/v2/accounts/ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9](http://127.0.0.1:20443/v2/accounts/ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9)
+
+and if necessary request tokens at the [faucet](https://testnet.blockstack.org/faucet) for both addresses.
 
 ## Use Escrow Smart Contracts
 
@@ -89,5 +122,6 @@ The test script contains calls of the following methods defined in the stacks-tr
 The buyer will deploy the contract, wait 10 seconds, deposit 65536 mSTXs. Then the seller will accept the deal. After another 10 seconds, the buyer will accept the deal and the price STXs will be transferred to the seller.
 
 While the testnet is still running, you can check the balance of the buyer and the seller at
-* [http://127.0.0.1:20443/v2/accounts/ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M](http://127.0.0.1:20443/v2/accounts/ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)
-* [http://127.0.0.1:20443/v2/accounts/ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9](http://127.0.0.1:20443/v2/accounts/ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9)
+
+- [http://127.0.0.1:20443/v2/accounts/ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M](http://127.0.0.1:20443/v2/accounts/ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)
+- [http://127.0.0.1:20443/v2/accounts/ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9](http://127.0.0.1:20443/v2/accounts/ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9)
