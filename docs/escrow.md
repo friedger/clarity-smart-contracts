@@ -55,8 +55,8 @@ amount = 67584
 If you want to use your own keys do something like this:
 
 ```
-cargo run --bin blockstack-cli generate-sk > keys.json
-cargo run --bin blockstack-cli generate-sk > keys2.json
+cargo run --bin blockstack-cli generate-sk --testnet > keys.json
+cargo run --bin blockstack-cli generate-sk --testnet > keys2.json
 ```
 
 ### Run Mocknet
