@@ -28,7 +28,7 @@ describe("escrow contract test suite", async () => {
 
     const price = 0x1000;
 
-    var fee = new BigNum(1401);
+    var fee = new BigNum(2548);
     const secretKeyBuyer = keysBuyer.secretKey;
     const secretKeySeller = keysSeller.secretKey;
     const network = new StacksTestnet();
@@ -43,9 +43,8 @@ describe("escrow contract test suite", async () => {
       nonce: new BigNum(0),
       network,
     });
-    var result = await broadcastTransaction(transaction, network);
-    console.log(result);
-    await new Promise((r) => setTimeout(r, 20000));
+    console.log(await broadcastTransaction(transaction, network));
+    await new Promise((r) => setTimeout(r, 30000));
 
     console.log("deposit");
     fee = new BigNum(256);
@@ -67,8 +66,7 @@ describe("escrow contract test suite", async () => {
         ),
       ],
     });
-    var result = await broadcastTransaction(transaction, network);
-    console.log(result);
+    console.log(await broadcastTransaction(transaction, network));
 
     console.log("accept seller");
     transaction = await makeContractCall({
@@ -82,8 +80,7 @@ describe("escrow contract test suite", async () => {
       network,
     });
 
-    var result = await broadcastTransaction(transaction, network);
-    console.log(result);
+    console.log(await broadcastTransaction(transaction, network));
     await new Promise((r) => setTimeout(r, 10000));
 
     console.log("accept buyer");
@@ -105,7 +102,6 @@ describe("escrow contract test suite", async () => {
         ),
       ],
     });
-    var result = await broadcastTransaction(transaction, network);
-    console.log(result);
+    console.log(await broadcastTransaction(transaction, network));
   });
 });
