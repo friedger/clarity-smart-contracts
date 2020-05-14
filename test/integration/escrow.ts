@@ -94,7 +94,7 @@ describe("escrow contract test suite", async () => {
       functionArgs: [],
       fee,
       senderKey: secretKeyBuyer,
-      nonce: new BigNum(3),
+      nonce: new BigNum(2),
       network,
       postConditions: [
         makeContractSTXPostCondition(

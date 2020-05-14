@@ -31,7 +31,7 @@ describe("monster contract test suite", async () => {
     var transaction = await makeSmartContractDeploy({
       contractName,
       codeBody,
-      fee: new BigNum(2139),
+      fee: new BigNum(2266),
       senderKey: secretKey,
       nonce: new BigNum(0),
       network,
