@@ -2,7 +2,6 @@
 
 (define-fungible-token spendable-token)
 (define-fungible-token hodl-token)
-(define-constant bank-account 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M.hodl-token)
 
 
 ;; Public functions
@@ -16,40 +15,42 @@
 
 (define-public (hodl (amount uint))
   (begin
-    (print (ft-transfer? spendable-token amount tx-sender bank-account))
-    (print (ft-transfer? hodl-token amount bank-account tx-sender))
+    (print (ft-transfer? spendable-token amount tx-sender (as-contract tx-sender)))
+    (let ((original-sender tx-sender))
+    (print (as-contract (ft-transfer? hodl-token amount tx-sender original-sender)))
+  )
   )
 )
 
 (define-public (unhodl (amount uint))
 (begin
-  (print (ft-transfer? hodl-token amount tx-sender bank-account))
+  (print (ft-transfer? hodl-token amount tx-sender (as-contract tx-sender)))
   (let ((original-sender tx-sender))
     (print (as-contract (ft-transfer? spendable-token amount tx-sender original-sender)))
   )
 ))
 
-(define-public (balance-of (owner principal))
-  (ok (+ (ft-get-balance spendable-token owner) (ft-get-balance hodl-token owner)))
+(define-read-only (balance-of (owner principal))
+   (+ (ft-get-balance spendable-token owner) (ft-get-balance hodl-token owner))
 )
 
-(define-public (hodl-balance-of (owner principal))
-  (ok (ft-get-balance hodl-token owner))
+(define-read-only (hodl-balance-of (owner principal))
+  (ft-get-balance hodl-token owner)
 )
 
-(define-public (get-spendable-in-bank)
-  (ok (ft-get-balance spendable-token bank-account))
+(define-read-only (get-spendable-in-bank)
+  (ft-get-balance spendable-token (as-contract tx-sender))
 )
 
-(define-public (get-hodl-in-bank)
-  (ok (ft-get-balance hodl-token bank-account))
+(define-read-only (get-hodl-in-bank)
+  (ft-get-balance hodl-token (as-contract tx-sender))
 )
 
 ;; Mint new tokens.
 (define-private (mint (account principal) (amount uint))
     (begin
       (ft-mint? spendable-token amount account)
-      (ft-mint? hodl-token amount bank-account)
+      (ft-mint? hodl-token amount (as-contract tx-sender))
       (ok amount)))
 
 ;; Initialize the contract
