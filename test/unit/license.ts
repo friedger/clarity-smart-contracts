@@ -23,7 +23,6 @@ describe("oi license contract test suite", () => {
   });
 
   it("should have a valid syntax", async () => {
-    await licenseClient.deployContract();
     await licenseClient.checkContract();
   });
 
@@ -33,7 +32,7 @@ describe("oi license contract test suite", () => {
     });
 
     it("should buy a license", async () => {
-      const amountBefore = await tokenClient.balanceOf(alice);
+      const amountBefore = await licenseClient.stxGetBalance(alice);
       const price = await licenseClient.getPrice(1);
       const receipt = await licenseClient.buyNonExpiring({ sender: alice });
       assert.equal(receipt.success, true);
@@ -42,21 +41,21 @@ describe("oi license contract test suite", () => {
         "Transaction executed and committed. Returned: 100"
       );
 
-      const amountAfter = await tokenClient.balanceOf(alice);
+      const amountAfter = await licenseClient.stxGetBalance(alice);
       assert.equal(amountAfter, amountBefore - price);
     });
 
     it("should not buy a license if user has an non-expiring license", async () => {
-      const amountBefore = await tokenClient.balanceOf(alice);
+      const amountBefore = await licenseClient.stxGetBalance(alice);
 
       const receipt = await licenseClient.buyExpiring(1, { sender: alice });
       assert.equal(receipt.success, false);
-      const amountAfter = await tokenClient.balanceOf(alice);
+      const amountAfter = await licenseClient.stxGetBalance(alice);
       assert.equal(amountAfter, amountBefore);
     });
 
     it("should not buy a license when insufficient funds", async () => {
-      tokenClient.transfer(bob, 100, { sender: alice });
+      await licenseClient.stxTransfer(bob, 100, { sender: alice });
       const receipt = await licenseClient.buyNonExpiring({ sender: alice });
       assert.equal(receipt.success, false);
       Result.match(

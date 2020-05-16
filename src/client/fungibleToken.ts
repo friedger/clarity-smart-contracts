@@ -15,7 +15,7 @@ export class FungibleTokenClient extends Client {
     params: { sender: string }
   ): Promise<Receipt> {
     const tx = this.createTransaction({
-      method: { name: "transfer-token", args: [`'${to}`, `${value}`] },
+      method: { name: "transfer-token", args: [`u${value}`, `'${to}`] },
     });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);
@@ -27,7 +27,7 @@ export class FungibleTokenClient extends Client {
       method: { name: "balance-of", args: [`'${owner}`] },
     });
     const res = await this.submitQuery(query);
-    return parseInt(Result.unwrap(res));
+    return Result.unwrapUInt(res);
   }
 
   async approve(

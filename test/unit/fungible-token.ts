@@ -9,13 +9,11 @@ describe("fungible token contract test suite", () => {
   let provider: Provider;
 
   const addresses = [
-    "SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7",
-    "S02J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKPVKG2CE",
-    "SZ2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKQ9H6DPR",
+    "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M",
+    "ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9",
   ];
   const alice = addresses[0]; // 200 tokens
   const bob = addresses[1]; // 100 tokens
-  const zoe = addresses[2];
 
   before(async () => {
     provider = await ProviderRegistry.createProvider();
@@ -23,7 +21,6 @@ describe("fungible token contract test suite", () => {
   });
 
   it("should use valid token", async () => {
-    await tokenClient.deployContract();
     await tokenClient.checkContract();
   });
 
@@ -35,6 +32,7 @@ describe("fungible token contract test suite", () => {
     it("should transfer token", async () => {
       const amountBefore = await tokenClient.balanceOf(alice);
       const receipt = await tokenClient.transfer(bob, 10, { sender: alice });
+      console.log(receipt);
       assert.equal(receipt.success, true);
       const amountAfter = await tokenClient.balanceOf(alice);
       assert.equal(amountAfter, amountBefore - 10);

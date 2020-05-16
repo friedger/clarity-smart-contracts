@@ -5,13 +5,26 @@ export class LicenseClient extends Client {
     super("license", "license/license", provider);
   }
 
-  async getAmount(params: { principal: string }): Promise<Receipt> {
+  async stxGetBalance(principal: string): Promise<number> {
     const query = this.createQuery({
-      method: { name: "get-price", args: [`${type}`] },
+      method: { name: "stx-get-balance", args: [`'${principal}`] },
     });
     const res = await this.submitQuery(query);
     const someString = Result.unwrap(res);
     return parseInt(someString.substr(6, someString.length - 7));
+  }
+
+  async stxTransfer(
+    recipient: string,
+    amount: number,
+    params: { sender: string }
+  ) {
+    const tx = this.createTransaction({
+      method: { name: "stx-transfer", args: [`'${recipient}`, `${amount}`] },
+    });
+    await tx.sign(params.sender);
+    const res = await this.submitTransaction(tx);
+    return res;
   }
 
   async buyNonExpiring(params: { sender: string }): Promise<Receipt> {

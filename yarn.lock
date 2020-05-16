@@ -2,25 +2,25 @@
 # yarn lockfile v1
 
 
-"@blockstack/clarity-native-bin@^0.1.13":
-  version "0.1.13"
-  resolved "https://registry.yarnpkg.com/@blockstack/clarity-native-bin/-/clarity-native-bin-0.1.13.tgz#658a8b14531a682790782f486a434d465375adcd"
-  integrity sha512-O8AOnNbi2V/Eb+B5wgMDiO9mtsYMGTBH+HpIpcj8/1kkPx3BlqWrNuaCAa+fMr5gdO4Xz5cVioUovGSNt/LmQw==
+"@blockstack/clarity-native-bin@^0.1.16":
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/@blockstack/clarity-native-bin/-/clarity-native-bin-0.1.16.tgz#8a0656626f98eb9487e6db6ea3948582184acfa7"
+  integrity sha512-wYKoq+8JzFwR9tKEzHRkpqRa4cdYui/y1rtvgkt2UqlwtP6oUNKSb7qkkjsa449QENS3UejugXj8R59gOg+gYQ==
   dependencies:
     fs-extra "^8.0.1"
     node-fetch "^2.6.0"
     semver "^6.1.1"
     tar "^4.4.8"
 
-"@blockstack/clarity@^0.1.13":
-  version "0.1.13"
-  resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.1.13.tgz#542284b9ed59072813239b435ee3de18d5a4740c"
-  integrity sha512-gsQrFjNncBWj1tuwXBY79uxihzWUWplpOSv/Lw64fhRBnfdZ3R93Yd9Nap48llEz1hfHbQjZk+Ha6yLy17NCwA==
+"@blockstack/clarity@^0.1.16":
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.1.16.tgz#75483365bc28d25eabb6b95df4ebafa5f67954fb"
+  integrity sha512-3XuPsQCz+wfSQHLVGhdfgiCVsZh2mkSZpDiV+TguoYOWtzAOZJQSoL0CdAkri0rDe5r+AM4s57lpukqgraRTaA==
 
-"@blockstack/stacks-transactions@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@blockstack/stacks-transactions/-/stacks-transactions-0.4.0.tgz#a85665b643b12c65bba057dd5a1750a4a0cef1e0"
-  integrity sha512-nrMpPqaeHjprbOoYg02sO8UN/T5UmdsyeT4YyDPvebKYTE1muSzNbO3GKUQi1kdZUS3iyIUTjNNFBbeoEXpzZg==
+"@blockstack/stacks-transactions@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@blockstack/stacks-transactions/-/stacks-transactions-0.4.2.tgz#8dd41788e9577a1863735117ca98df9f07b8bf18"
+  integrity sha512-BTD68rFT/kVwWxoKX3Xn9SXEk27Tol/Af4TdqPJbf9xWJrQ6sF2WWyEjz9GHOg2EuqHoVN42mfs9XsI8z905qQ==
   dependencies:
     "@types/bn.js" "^4.11.6"
     "@types/elliptic" "^6.4.12"

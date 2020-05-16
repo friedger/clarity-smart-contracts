@@ -21,11 +21,14 @@ describe("Animal kingdoms contract test suite", () => {
   });
 
   it("should have a valid syntax", async () => {
-    await client.deployContract();
     await client.checkContract();
   });
 
   describe("deployed contract tests", () => {
+    before(async () => {
+      await client.deployContract();
+    });
+
     it("should mint a new token", async () => {
       const result = await client.mintNext(alice, { sender: owner });
       console.log(result);
