@@ -17,17 +17,25 @@ describe("oi license contract test suite", () => {
   const bob = addresses[1]; // 100 tokens
   const zoe = addresses[2];
 
-  before(async () => {
-    provider = await ProviderRegistry.createProvider();
-    licenseClient = new LicenseClient(provider);
-  });
+  describe("basic tests", () => {
+    before(async () => {
+      provider = await ProviderRegistry.createProvider();
+      licenseClient = new LicenseClient(provider);
+    });
 
-  it("should have a valid syntax", async () => {
-    await licenseClient.checkContract();
+    it("should have a valid syntax", async () => {
+      await licenseClient.checkContract();
+    });
+
+    after(async () => {
+      await provider.close();
+    });
   });
 
   describe("deployed contract tests", () => {
-    before(async () => {
+    beforeEach(async () => {
+      provider = await ProviderRegistry.createProvider();
+      licenseClient = new LicenseClient(provider);
       await licenseClient.deployContract();
     });
 
@@ -35,6 +43,7 @@ describe("oi license contract test suite", () => {
       const amountBefore = await licenseClient.stxGetBalance(alice);
       const price = await licenseClient.getPrice(1);
       const receipt = await licenseClient.buyNonExpiring({ sender: alice });
+      console.log(receipt);
       assert.equal(receipt.success, true);
       assert.equal(
         Result.unwrap(receipt),
@@ -47,9 +56,24 @@ describe("oi license contract test suite", () => {
 
     it("should not buy a license if user has an non-expiring license", async () => {
       const amountBefore = await licenseClient.stxGetBalance(alice);
+      const receipt0 = await licenseClient.buyNonExpiring({ sender: alice });
+      assert.equal(
+        receipt0.success,
+        true,
+        `precondition failed: buying non-exipring ${receipt0.error}`
+      );
 
       const receipt = await licenseClient.buyExpiring(1, { sender: alice });
       assert.equal(receipt.success, false);
+      Result.match(
+        receipt,
+        () => {},
+        (err) =>
+          assert.equal(
+            err.toString(),
+            "ExecutionError: Execute expression on contract failed with bad output: Aborted: 5"
+          )
+      );
       const amountAfter = await licenseClient.stxGetBalance(alice);
       assert.equal(amountAfter, amountBefore);
     });
@@ -64,7 +88,7 @@ describe("oi license contract test suite", () => {
         (err) =>
           assert.equal(
             err.toString(),
-            "ExecutionError: Execute expression on contract failed with bad output: Aborted: 5"
+            "ExecutionError: Execute expression on contract failed with bad output: Aborted: 4"
           )
       );
     });
@@ -78,10 +102,10 @@ describe("oi license contract test suite", () => {
 
       let hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, true);
-      provider.mineBlock(1);
+      await licenseClient.mineBlock();
       hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, false);
-      provider.mineBlock(1);
+      await licenseClient.mineBlock();
       hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, false);
     });
@@ -96,16 +120,16 @@ describe("oi license contract test suite", () => {
       console.log(await licenseClient.getLicense(bob));
       let hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, true);
-      provider.mineBlock(1);
+      await licenseClient.mineBlock();
       hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, true);
-      provider.mineBlock(1);
+      await licenseClient.mineBlock();
       hasValidLicense = await licenseClient.hasValidLicense(bob);
       assert.equal(hasValidLicense, false);
     });
   });
 
-  after(async () => {
+  afterEach(async () => {
     await provider.close();
   });
 });

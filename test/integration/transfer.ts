@@ -8,9 +8,9 @@ import {
   broadcastTransaction,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443";
 const network = new StacksTestnet();
-network.broadcastApiUrl = STACKS_API_URL;
+network.coreApiUrl = STACKS_API_URL;
 
 describe("transfer test suite", async () => {
   it("should deposit and payout balance", async () => {
@@ -35,7 +35,7 @@ describe("transfer test suite", async () => {
     console.log(transaction.serialize().toString("hex"));
     const broadcastResult = await broadcastTransaction(transaction, {
       ...network,
-      broadcastApiUrl: "http://neon.blockstack.org:20443",
+      coreApiUrl: "http://neon.blockstack.org:20443",
     });
 
     // "8dd1d5a6d21600c9d75d409e61b866eea8061fb09577b087b44b8b3870360fd401",

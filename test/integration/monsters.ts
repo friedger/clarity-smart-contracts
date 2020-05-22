@@ -10,14 +10,14 @@ import {
 const BigNum = require("bn.js");
 import * as fs from "fs";
 
-const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443";
 
 describe("monster contract test suite", async () => {
   it("should create and feed a monster", async () => {
     const keys = JSON.parse(fs.readFileSync("./keys.json").toString());
     const keys2 = JSON.parse(fs.readFileSync("./keys2.json").toString());
     const network = new StacksTestnet();
-    network.broadcastApiUrl = STACKS_API_URL;
+    network.coreApiUrl = STACKS_API_URL;
 
     const contractAddress = keys.stacksAddress;
     const contractName = "monsters";

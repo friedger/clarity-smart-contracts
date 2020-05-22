@@ -17,10 +17,10 @@
   resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.1.16.tgz#75483365bc28d25eabb6b95df4ebafa5f67954fb"
   integrity sha512-3XuPsQCz+wfSQHLVGhdfgiCVsZh2mkSZpDiV+TguoYOWtzAOZJQSoL0CdAkri0rDe5r+AM4s57lpukqgraRTaA==
 
-"@blockstack/stacks-transactions@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@blockstack/stacks-transactions/-/stacks-transactions-0.4.2.tgz#8dd41788e9577a1863735117ca98df9f07b8bf18"
-  integrity sha512-BTD68rFT/kVwWxoKX3Xn9SXEk27Tol/Af4TdqPJbf9xWJrQ6sF2WWyEjz9GHOg2EuqHoVN42mfs9XsI8z905qQ==
+"@blockstack/stacks-transactions@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@blockstack/stacks-transactions/-/stacks-transactions-0.4.3.tgz#3d3cdad2fd91bb0a96129cad1f1df4a424f55ce4"
+  integrity sha512-ejv3A6Ifa0tZ8DV+LQMhKcZ4uu7H4rIoIHOOAqCY3avwuiFS2EyYbSADf7+weV0uvY6mgkP2fzZXQMuh4Q+IUw==
   dependencies:
     "@types/bn.js" "^4.11.6"
     "@types/elliptic" "^6.4.12"

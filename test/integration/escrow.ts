@@ -13,7 +13,7 @@ import {
   broadcastTransaction,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://localhost:20443/v2/transactions";
+const STACKS_API_URL = "http://localhost:20443";
 
 describe("escrow contract test suite", async () => {
   it("should deposit and payout balance", async () => {
@@ -32,7 +32,7 @@ describe("escrow contract test suite", async () => {
     const secretKeyBuyer = keysBuyer.secretKey;
     const secretKeySeller = keysSeller.secretKey;
     const network = new StacksTestnet();
-    network.broadcastApiUrl = STACKS_API_URL;
+    network.coreApiUrl = STACKS_API_URL;
 
     console.log("deploy contract");
     var transaction = await makeSmartContractDeploy({

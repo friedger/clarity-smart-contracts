@@ -11,14 +11,14 @@ import {
   bufferCV,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443";
 
 describe("animal kingdom test suite", async () => {
   it("should create a new token", async () => {
     let keys = JSON.parse(fs.readFileSync("./keys.json").toString());
     let keys2 = JSON.parse(fs.readFileSync("./keys2.json").toString());
     const network = new StacksTestnet();
-    network.broadcastApiUrl = STACKS_API_URL;
+    network.coreApiUrl = STACKS_API_URL;
     let contractName = "animalkings";
     let codeBody = fs
       .readFileSync("./contracts/experiments/animal-kingdom.clar")

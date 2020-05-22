@@ -10,9 +10,9 @@ import {
   broadcastTransaction,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443";
 const network = new StacksTestnet();
-network.broadcastApiUrl = STACKS_API_URL;
+network.coreApiUrl = STACKS_API_URL;
 
 describe("status contract test suite", async () => {
   it("read a status", async () => {

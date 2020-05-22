@@ -31,7 +31,6 @@ describe("Animal kingdoms contract test suite", () => {
 
     it("should mint a new token", async () => {
       const result = await client.mintNext(alice, { sender: owner });
-      console.log(result);
       assert.equal(result.success, true);
     });
   });

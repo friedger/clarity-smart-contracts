@@ -10,14 +10,14 @@ import {
   makeStandardSTXPostCondition,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443";
 
 describe("oi license contract test suite", async () => {
   it("should buy a non-expiring license", async () => {
     let keys = JSON.parse(fs.readFileSync("./keys.json").toString());
     let keys2 = JSON.parse(fs.readFileSync("./keys2.json").toString());
     const network = new StacksTestnet();
-    network.broadcastApiUrl = STACKS_API_URL;
+    network.coreApiUrl = STACKS_API_URL;
     let contractName = "oi-license";
     let codeBody = fs
       .readFileSync("./contracts/license/license.clar")

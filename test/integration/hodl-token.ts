@@ -13,7 +13,7 @@ import {
   createAssetInfo,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://127.0.0.1:20443/v2/transactions";
+const STACKS_API_URL = "http://127.0.0.1:20443";
 
 describe("hold token test suite", async () => {
   it("should buy and hold tokens", async () => {
@@ -22,7 +22,7 @@ describe("hold token test suite", async () => {
     let keys2 = JSON.parse(fs.readFileSync("./keys2.json").toString());
     let secretKey2 = keys2.secretKey;
     const network = new StacksTestnet();
-    network.broadcastApiUrl = STACKS_API_URL;
+    network.coreApiUrl = STACKS_API_URL;
 
     let contractName = "hodl-token";
     var contractAddress = keys.stacksAddress;

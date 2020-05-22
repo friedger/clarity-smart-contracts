@@ -32,7 +32,6 @@ describe("fungible token contract test suite", () => {
     it("should transfer token", async () => {
       const amountBefore = await tokenClient.balanceOf(alice);
       const receipt = await tokenClient.transfer(bob, 10, { sender: alice });
-      console.log(receipt);
       assert.equal(receipt.success, true);
       const amountAfter = await tokenClient.balanceOf(alice);
       assert.equal(amountAfter, amountBefore - 10);
