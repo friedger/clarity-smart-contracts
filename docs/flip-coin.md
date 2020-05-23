@@ -19,12 +19,12 @@ Note, that users don't know whether another user has already bet on the given va
 
 ```
 [[mstx_balance]]
-address = "ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9"
-amount = 1256
-
-[[mstx_balance]]
 address = "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M"
 amount = 10256
+
+[[mstx_balance]]
+address = "ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9"
+amount = 1256
 ```
 
 1. Deploy contract (with keys.json) using `yarn mocha test/integration/flip-coin0.ts`.
