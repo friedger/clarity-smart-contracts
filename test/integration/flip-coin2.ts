@@ -32,22 +32,21 @@ describe("flip coin test suite", async () => {
       contractAddress,
       contractName,
       functionName: "bet",
-      functionArgs: [uintCV(10), trueCV()],
+      functionArgs: [trueCV()],
       fee: new BigNum(247),
       senderKey: keys2.secretKey,
-      nonce: new BigNum(0),
       network,
       postConditions: [
         makeStandardSTXPostCondition(
           senderAddress,
           FungibleConditionCode.Equal,
-          new BigNum(10)
+          new BigNum(1000)
         ),
         makeContractSTXPostCondition(
           contractAddress,
           contractName,
           FungibleConditionCode.LessEqual,
-          new BigNum(20)
+          new BigNum(2000)
         ),
       ],
     });

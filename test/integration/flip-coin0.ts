@@ -26,7 +26,7 @@ describe("flip coin test suite", async () => {
     const transaction = await makeSmartContractDeploy({
       contractName,
       codeBody,
-      fee: new BigNum(5979),
+      fee: new BigNum(6947),
       senderKey: keysBuyer.secretKey,
       nonce: new BigNum(0),
       network,

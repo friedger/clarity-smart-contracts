@@ -3,12 +3,9 @@ import * as fs from "fs";
 import {
   FungibleConditionCode,
   makeStandardSTXPostCondition,
-  makeSTXTokenTransfer,
   StacksTestnet,
   broadcastTransaction,
-  makeSmartContractDeploy,
   makeContractCall,
-  uintCV,
   trueCV,
 } from "@blockstack/stacks-transactions";
 import BN from "bn.js";
@@ -28,7 +25,7 @@ describe("flip coin test suite", async () => {
       contractAddress,
       contractName,
       functionName: "bet",
-      functionArgs: [uintCV(10), trueCV()],
+      functionArgs: [trueCV()],
       fee: new BigNum(205),
       senderKey: keysBuyer.secretKey,
       network,
@@ -36,7 +33,7 @@ describe("flip coin test suite", async () => {
         makeStandardSTXPostCondition(
           contractAddress,
           FungibleConditionCode.Equal,
-          new BigNum(10)
+          new BigNum(1000)
         ),
       ],
     });
