@@ -26,7 +26,7 @@ describe("flip coin test suite", async () => {
       contractName,
       functionName: "bet",
       functionArgs: [trueCV()],
-      fee: new BigNum(205),
+      fee: new BigNum(188),
       senderKey: keysBuyer.secretKey,
       network,
       postConditions: [
