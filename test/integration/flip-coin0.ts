@@ -20,13 +20,13 @@ describe("flip coin test suite", async () => {
     const contractAddress = keysBuyer.stacksAddress;
     const contractName = "flip-coin";
     const codeBody = fs
-      .readFileSync("./contracts/experiments/flip-coin.clar")
+      .readFileSync("./contracts/experiments/flip-coin-at-two.clar")
       .toString();
 
     const transaction = await makeSmartContractDeploy({
       contractName,
       codeBody,
-      fee: new BigNum(3830),
+      fee: new BigNum(5998),
       senderKey: keysBuyer.secretKey,
       network,
     });

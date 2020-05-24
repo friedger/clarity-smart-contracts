@@ -11,6 +11,7 @@ import {
   uintCV,
   trueCV,
   makeContractSTXPostCondition,
+  falseCV,
 } from "@blockstack/stacks-transactions";
 import BN from "bn.js";
 
@@ -32,7 +33,7 @@ describe("flip coin test suite", async () => {
       contractAddress,
       contractName,
       functionName: "bet",
-      functionArgs: [trueCV()],
+      functionArgs: [falseCV()],
       fee: new BigNum(230),
       senderKey: keys2.secretKey,
       network,
@@ -45,8 +46,8 @@ describe("flip coin test suite", async () => {
         makeContractSTXPostCondition(
           contractAddress,
           contractName,
-          FungibleConditionCode.LessEqual,
-          new BigNum(2000)
+          FungibleConditionCode.GreaterEqual,
+          new BigNum(0)
         ),
       ],
     });

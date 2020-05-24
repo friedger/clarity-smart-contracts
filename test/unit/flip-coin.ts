@@ -15,16 +15,6 @@ class FlipCoinProvider extends Client {
     );
   }
 
-  async mineBlock(): Promise<Receipt> {
-    const tx = this.createTransaction({
-      method: { name: "tick", args: [] },
-    });
-    await tx.sign("ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M");
-    const res = await this.submitTransaction(tx);
-    console.log(res);
-    return res;
-  }
-
   async flipCoin(): Promise<Receipt> {
     const query = this.createQuery({
       method: { name: "flip-coin", args: [] },
@@ -35,7 +25,7 @@ class FlipCoinProvider extends Client {
   }
 }
 
-describe("oi license contract test suite", () => {
+describe("flip coin contract test suite", () => {
   let provider: Provider;
   let client: FlipCoinProvider;
 
@@ -51,9 +41,6 @@ describe("oi license contract test suite", () => {
     });
 
     it("should flip a coin", async () => {
-      await client.mineBlock();
-      await client.mineBlock();
-      await client.mineBlock();
       await client.flipCoin();
     });
 
