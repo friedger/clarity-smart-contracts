@@ -11,7 +11,7 @@
 
 (define-constant err-bet-exists u10)
 (define-constant even-buffer 0x00020406080a0c0e10121416181a1c1e20222426282a2c2e30323436383a3c3e40424446484a4c4e50525456585a5c5e60626466686a6c6e70727476787a7c7e80828486888a8c8e90929496989a9c9ea0a2a4a6a8aaacaeb0b2b4b6b8babcbec0c2c4c6c8caccced0d2d4d6d8dadcdee0e2e4e6e8eaecee)
-
+(define-constant default-amount u1000)
 ;; private functions
 
 ;; used in (fold) to get last item of a buffer
@@ -34,17 +34,24 @@
   (is-eq (get result (fold is-even even-buffer {value: value, result: 0x01})) 0x00)
 )
 
-;; flip coin by looking at the hash at the given block
+;; public functions
+
+;; checks property of last byte of given buffer
 ;; returns true if the last byte of the hash is even
-(define-private (flip-coin-at (height uint))
-  (let ((hash (unwrap-panic (get-block-info? header-hash height))))
-    (let ((last-value  (fold last hash "0")))
-      (even last-value)
-    )
+(define-read-only (is-last-even (hash (buff 32)) )
+  (let ((last-value  (fold last hash "0")))
+    (even last-value)
   )
 )
 
-;; public functions
+;; flip coin by looking at the hash at the given block
+;; returns true if the last byte of the hash is even
+(define-read-only (flip-coin-at (height uint))
+  (let ((hash (unwrap-panic (get-block-info? header-hash height))))
+    (is-last-even hash)
+  )
+)
+
 
 ;; returns the random value based on the previous block
 (define-read-only (flip-coin)
@@ -53,7 +60,13 @@
 
 ;; returns how much stx were bet at the given block
 (define-read-only (get-jackpot)
-  (var-get jackpot)
+  (match (var-get pending-payout)
+    height (match (get-optional-winner-at height)
+              winner u0
+              (+ (var-get jackpot) (get-amount-at height))
+           )
+    (var-get jackpot)
+  )
 )
 
 ;; returns how much stx were bet at the given block
@@ -95,7 +108,7 @@
 ;; if payout needs to be done then this function call will do it (note that the caller
 ;; needs to provide corresponding post conditions)
 (define-public (bet (value bool))
-  (let ((amount u1000))
+  (let ((amount default-amount))
     (begin
       (payout (var-get pending-payout))
       (if (map-insert gamblers ((height block-height) (value value)) ((amount amount) (principal tx-sender)))
