@@ -7,12 +7,15 @@ import {
   BooleanCV,
   uintCV,
   UIntCV,
+  OptionalCV,
+  StandardPrincipalCV,
+  addressToString,
 } from "@blockstack/stacks-transactions";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
 const network = new StacksTestnet();
 network.coreApiUrl = STACKS_API_URL;
-const betAtHeight = 20;
+const betAtHeight = 41;
 
 describe("flip coin test suite", async () => {
   it("should flip coin", async () => {
@@ -63,17 +66,17 @@ describe("flip coin test suite", async () => {
         )}"]}`,
       }
     );
-    console.log(response.status);
     if (response.status === 200) {
       const result = await response.json();
       if (result.okay) {
-        console.log(result);
         const resultValue = deserializeCV(
           Buffer.from(result.result.substr(2), "hex")
         );
 
-        const resultData = resultValue as BooleanCV;
-        console.log(resultData);
+        const optionalWinner = resultValue as OptionalCV;
+        console.log(
+          `Winner is: ${addressToString(optionalWinner["value"].address)}`
+        );
       } else {
         console.log(result);
       }
@@ -103,17 +106,15 @@ describe("flip coin test suite", async () => {
         )}"]}`,
       }
     );
-    console.log(response.status);
     if (response.status === 200) {
       const result = await response.json();
       if (result.okay) {
-        console.log(result);
         const resultValue = deserializeCV(
           Buffer.from(result.result.substr(2), "hex")
         );
 
-        const resultData = resultValue as BooleanCV;
-        console.log(resultData);
+        const resultData = resultValue as UIntCV;
+        console.log(`Prize is ${resultData.value.toString(10)}`);
       } else {
         console.log(result);
       }
