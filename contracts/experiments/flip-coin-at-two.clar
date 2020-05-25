@@ -16,7 +16,7 @@
 )
 
 ;; used in (fold) to check if character is even
-(define-private (is-even (item (buff 1)) (value-tuple {value: (buff 1), result (buff 1)}))
+(define-private (is-even (item (buff 1)) (value-tuple {value: (buff 1), result: (buff 1)}))
   (let ((val (get value value-tuple)))
     (if (is-eq item val )
       {value: val, result: 0x00}
