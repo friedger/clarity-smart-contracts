@@ -19,8 +19,11 @@ describe("flip coin test suite", async () => {
 
     const contractAddress = keysBuyer.stacksAddress;
     const contractName = "flip-coin";
+    // const contractName = "flip-coin-jackpot";
+    // const contractName = "flip-coin-at-two";
+
     const codeBody = fs
-      .readFileSync("./contracts/experiments/flip-coin-at-two.clar")
+      .readFileSync(`./contracts/experiments/${contractName}.clar`)
       .toString();
 
     const transaction = await makeSmartContractDeploy({
