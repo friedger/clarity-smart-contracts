@@ -8,7 +8,6 @@ import {
   uintCV,
   UIntCV,
   OptionalCV,
-  StandardPrincipalCV,
   addressToString,
 } from "@blockstack/stacks-transactions";
 
@@ -22,7 +21,7 @@ describe("flip coin test suite", async () => {
     const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
 
     const contractAddress = keysBuyer.stacksAddress;
-    const contractName = "flip-coin";
+    const contractName = "flip-coin-jackpot";
     const functionName = "flip-coin";
 
     const response = await fetch(
@@ -49,7 +48,7 @@ describe("flip coin test suite", async () => {
     const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
 
     const contractAddress = keysBuyer.stacksAddress;
-    const contractName = "flip-coin";
+    const contractName = "flip-coin-jackpot";
     const functionName = encodeURIComponent("get-optional-winner-at");
 
     const height = serializeCV(uintCV(betAtHeight));
@@ -74,9 +73,13 @@ describe("flip coin test suite", async () => {
         );
 
         const optionalWinner = resultValue as OptionalCV;
-        console.log(
-          `Winner is: ${addressToString(optionalWinner["value"].address)}`
-        );
+        if (optionalWinner.type === 9) {
+          console.log(`No winner`);
+        } else {
+          console.log(
+            `Winner is: ${addressToString(optionalWinner["value"].address)}`
+          );
+        }
       } else {
         console.log(result);
       }
@@ -89,7 +92,7 @@ describe("flip coin test suite", async () => {
     const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
 
     const contractAddress = keysBuyer.stacksAddress;
-    const contractName = "flip-coin";
+    const contractName = "flip-coin-jackpot";
     const functionName = "get-amount-at";
 
     const height = serializeCV(uintCV(betAtHeight));
@@ -127,7 +130,7 @@ describe("flip coin test suite", async () => {
     const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
 
     const contractAddress = keysBuyer.stacksAddress;
-    const contractName = "flip-coin";
+    const contractName = "flip-coin-jackpot";
     const functionName = "get-jackpot";
 
     const response = await fetch(
@@ -141,17 +144,15 @@ describe("flip coin test suite", async () => {
         body: `{"sender":"${contractAddress}","arguments":[]}`,
       }
     );
-    console.log(response.status);
     if (response.status === 200) {
       const result = await response.json();
       if (result.okay) {
-        console.log(result);
         const resultValue = deserializeCV(
           Buffer.from(result.result.substr(2), "hex")
         );
 
         const resultData = resultValue as UIntCV;
-        console.log(resultData.value);
+        console.log(`Jackpot is ${resultData.value}`);
       } else {
         console.log(result);
       }

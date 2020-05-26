@@ -8,6 +8,7 @@ import {
   makeContractCall,
   trueCV,
   makeContractSTXPostCondition,
+  contractPrincipalCV,
 } from "@blockstack/stacks-transactions";
 import BN from "bn.js";
 
@@ -20,14 +21,14 @@ describe("flip coin test suite", async () => {
     const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
 
     const contractAddress = keysBuyer.stacksAddress;
-    const contractName = "flip-coin";
+    const contractName = "flip-coin-jackpot";
 
     const transaction = await makeContractCall({
       contractAddress,
       contractName,
       functionName: "bet",
       functionArgs: [trueCV()],
-      fee: new BigNum(230),
+      fee: new BigNum(284),
       senderKey: keysBuyer.secretKey,
       network,
       postConditions: [

@@ -72,6 +72,9 @@
   amount: uint, created-at: uint}
   new-slot)
 
+;; store information about tax office to pay tax on prize immediately
+(use-trait tax-office-trait .flip-coin-tax-office.tax-office-trait)
+
 ;; returns how much stx were bet at the given block
 (define-read-only (get-amount-at (height uint))
   (match (map-get? amounts ((height height)))
@@ -91,15 +94,28 @@
   )
 )
 
+;; splits the prize money
+;; 10% goes to another account
+;; the rest to the winner
+(define-private (shared-amounts (amount uint))
+   (let ((shared (/ (* amount u10) u100)))
+    {winner: (- amount shared),
+    shared: shared,}
+  )
+)
 ;; pays the bet amount at the given block
 ;; height must be below the current height
-(define-private (payout (height (optional uint)))
+;; 10% goes to the tax office
+(define-private (payout (height (optional uint)) (tax-office <tax-office-trait>))
  (match height
   some-height (if (<= block-height some-height)
     true
-    (begin
-      (unwrap-panic (as-contract (stx-transfer? (get-amount-at some-height) tx-sender (unwrap-panic (get-optional-winner-at some-height)))))
-      (var-set pending-payout none)
+    (let ((shared-prize (shared-amounts (get-amount-at some-height))))
+      (begin
+        (unwrap-panic (as-contract (stx-transfer? (get winner shared-prize) tx-sender (unwrap-panic (get-optional-winner-at some-height)))))
+        (unwrap-panic (as-contract (contract-call? tax-office pay-tax (get shared shared-prize))))
+        (var-set pending-payout none)
+      )
     ))
   true
  )
@@ -154,10 +170,10 @@
 ;; bet 1000 mSTX on the given value. Only one user can bet on that value for each block.
 ;; if payout needs to be done then this function call will do it (note that the caller
 ;; needs to provide corresponding post conditions)
-(define-public (bet (value bool))
+(define-public (bet (value bool) (tax-office <tax-office-trait>))
   (let ((amount default-amount))
     (begin
-      (payout (var-get pending-payout))
+      (payout (var-get pending-payout) tax-office)
       (if (is-some (next-gambler value))
         (err err-bet-exists)
         (begin

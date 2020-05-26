@@ -142,3 +142,12 @@
     )
   )
 )
+
+(impl-trait .flip-coin-tax-office.tax-office-trait)
+
+(define-public (pay-tax (amount uint))
+  (begin
+    (var-set jackpot (+ (var-get jackpot) amount))
+    (stx-transfer? amount tx-sender (as-contract tx-sender))
+  )
+)
