@@ -25,7 +25,7 @@ class PanicProvider extends Client {
   }
 
   async panicReadOnly(): Promise<Receipt> {
-    const q = this.createTransaction({
+    const q = this.createQuery({
       method: { name: "panic-read-only", args: [] },
     });
     return await this.submitQuery(q);
