@@ -92,12 +92,13 @@
 )
 
 ;; pays the bet amount at the given block
+;; height must be below the current height
 (define-private (payout (height (optional uint)))
  (match height
-  some-height (if (is-eq block-height some-height)
+  some-height (if (<= block-height some-height)
     true
     (begin
-      (unwrap-panic (print (as-contract (stx-transfer? (get-amount-at some-height) tx-sender (unwrap-panic (get-optional-winner-at some-height))))))
+      (unwrap-panic (as-contract (stx-transfer? (get-amount-at some-height) tx-sender (unwrap-panic (get-optional-winner-at some-height)))))
       (var-set pending-payout none)
     ))
   true

@@ -101,12 +101,12 @@
 ;; pays the bet amount at the given block plus the jackpot
 (define-private (payout (height (optional uint)))
  (match height
-  some-height (if (is-eq block-height some-height)
+  some-height (if (<= block-height some-height)
     true
     (begin
       (match (get-optional-winner-at some-height)
         winner (begin
-          (unwrap-panic (print (as-contract (stx-transfer? (+ (var-get jackpot) (get-amount-at some-height)) tx-sender winner))))
+          (unwrap-panic (as-contract (stx-transfer? (+ (var-get jackpot) (get-amount-at some-height)) tx-sender winner)))
           (var-set jackpot u0)
           )
         (var-set jackpot (+ (var-get jackpot) (get-amount-at some-height)))
@@ -117,8 +117,12 @@
  )
 )
 
-(define-private (next-gambler (value bool))
-  (map-get? gamblers {height: block-height, value: value})
+(define-private (update-game-after-payment (value bool) (amount uint))
+  (begin
+    (map-set amounts ((height block-height))  ((amount (+ (get-amount-at block-height) amount))))
+    (var-set pending-payout (some block-height))
+    (ok block-height)
+  )
 )
 
 ;; bet 1000 mSTX on the given value. Only one user can bet on that value for each block.
@@ -130,11 +134,7 @@
       (payout (var-get pending-payout))
       (if (map-insert gamblers ((height block-height) (value value)) ((amount amount) (principal tx-sender)))
         (match (stx-transfer? amount tx-sender (as-contract tx-sender))
-          success (begin
-            (map-set amounts ((height block-height))  ((amount (+ (get-amount-at block-height) amount))))
-            (var-set pending-payout (some block-height))
-            (ok block-height)
-          )
+          success (update-game-after-payment value amount)
           error (err error)
         )
         (err err-bet-exists)
