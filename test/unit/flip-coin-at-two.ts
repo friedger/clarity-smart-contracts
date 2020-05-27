@@ -19,7 +19,10 @@ class FlipCoinClassicProvider extends Client {
     const tx = this.createTransaction({
       method: {
         name: "bet",
-        args: [`${value}`],
+        args: [
+          `${value}`,
+          "'S1G2081040G2081040G2081040G208105NK8PE5.flip-coin-jackpot",
+        ],
       },
     });
     tx.sign("S1G2081040G2081040G2081040G208105NK8PE5");
