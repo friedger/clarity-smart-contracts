@@ -88,14 +88,16 @@
                     }
                   )
                   (if (map-insert amounts ((height block-height))  ((amount (+ amount amount))))
-                    (begin
-                      (map-insert matched-bets {created-at: (get created-at (var-get next-slot))} {height: block-height})
-                      (var-set next-slot new-slot)
-                      (var-set pending-payout (some block-height))
-                      (ok {
-                            created-at: (get created-at (var-get next-slot)),
-                            bet-at: block-height
-                          })
+                    (let (created-at: (get created-at (var-get next-slot)))
+                      (begin
+                        (map-insert matched-bets {created-at: created-at} {height: block-height})
+                        (var-set next-slot new-slot)
+                        (var-set pending-payout (some block-height))
+                        (ok {
+                              created-at: created-at,
+                              bet-at: block-height
+                            })
+                      )
                     )
                     (panic)
                   )
