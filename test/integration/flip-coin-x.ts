@@ -16,12 +16,12 @@ const network = new StacksTestnet();
 network.coreApiUrl = STACKS_API_URL;
 const betAtHeight = 41;
 
+const keys = JSON.parse(fs.readFileSync("./keys.json").toString());
+const contractAddress = "ST12EY99GS4YKP0CP2CFW6SEPWQ2CGVRWK5GHKDRV"; //keys.stacksAddress;
+
 describe("flip coin test suite", async () => {
   it("should flip coin", async () => {
-    const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
-
-    const contractAddress = keysBuyer.stacksAddress;
-    const contractName = "flip-coin-jackpot";
+    const contractName = "flip-coin";
     const functionName = "flip-coin";
 
     const response = await fetch(
@@ -45,9 +45,6 @@ describe("flip coin test suite", async () => {
   });
 
   it("should get winner ", async () => {
-    const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
-
-    const contractAddress = keysBuyer.stacksAddress;
     const contractName = "flip-coin-jackpot";
     const functionName = encodeURIComponent("get-optional-winner-at");
 
@@ -89,9 +86,6 @@ describe("flip coin test suite", async () => {
   });
 
   it("should get amount ", async () => {
-    const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
-
-    const contractAddress = keysBuyer.stacksAddress;
     const contractName = "flip-coin-jackpot";
     const functionName = "get-amount-at";
 
@@ -127,9 +121,6 @@ describe("flip coin test suite", async () => {
   });
 
   it("should get jackpot ", async () => {
-    const keysBuyer = JSON.parse(fs.readFileSync("./keys.json").toString());
-
-    const contractAddress = keysBuyer.stacksAddress;
     const contractName = "flip-coin-jackpot";
     const functionName = "get-jackpot";
 

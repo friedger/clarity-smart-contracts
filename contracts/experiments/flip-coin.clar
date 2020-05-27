@@ -1,8 +1,9 @@
 ;; A simple flip coin contract
-;; used in betting games flip-coin-at-two and flip-coin-jackpot
+;; used in betting game contracts flip-coin-at-two and flip-coin-jackpot
 ;;
 ;; For more details see docs/flip-coin.md
 
+;; buffer of all even characters
 (define-constant even-buffer 0x00020406080a0c0e10121416181a1c1e20222426282a2c2e30323436383a3c3e40424446484a4c4e50525456585a5c5e60626466686a6c6e70727476787a7c7e80828486888a8c8e90929496989a9c9ea0a2a4a6a8aaacaeb0b2b4b6b8babcbec0c2c4c6c8caccced0d2d4d6d8dadcdee0e2e4e6e8eaecee)
 
 ;; private functions
@@ -13,11 +14,11 @@
 )
 
 ;; used in (fold) to check if character is even
-(define-private (is-even (item (buff 1)) (value-tuple {value: (buff 1), result: (buff 1)}))
-  (let ((val (get value value-tuple)))
+(define-private (is-even (item (buff 1)) (state {value: (buff 1), result: bool}))
+  (let ((val (get value state)))
     (if (is-eq item val )
-      {value: val, result: 0x00}
-      {value: val, result: (get result value-tuple)}
+      {value: val, result: true}
+      state
     )
   )
 )
@@ -26,7 +27,7 @@
 
 ;; check whether the character is even
 (define-read-only (even (value (buff 1)))
-  (is-eq (get result (fold is-even even-buffer {value: value, result: 0x01})) 0x00)
+  (get result (fold is-even even-buffer {value: value, result: false}))
 )
 
 ;; checks property of last byte of given buffer
@@ -46,7 +47,7 @@
 )
 
 
-;; returns the random value based on the previous block
+;; returns the random value based on the current block
 (define-read-only (flip-coin)
-  (flip-coin-at (- block-height u1))
+  (flip-coin-at block-height)
 )

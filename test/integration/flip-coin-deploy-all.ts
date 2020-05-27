@@ -23,7 +23,6 @@ const network = new StacksTestnet();
 network.coreApiUrl = STACKS_API_URL;
 
 const keys = JSON.parse(fs.readFileSync("./keys.json").toString());
-const contractAddress = keys.stacksAddress;
 async function deployContract(contractName, fee) {
   const codeBody = fs
     .readFileSync(`./contracts/experiments/${contractName}.clar`)
