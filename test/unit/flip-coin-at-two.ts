@@ -6,7 +6,7 @@ import {
   Receipt,
 } from "@blockstack/clarity";
 
-class FlipCoinTaxOfficeProvider extends Client {
+class FlipCoinClassicProvider extends Client {
   constructor(provider: Provider) {
     super(
       "S1G2081040G2081040G2081040G208105NK8PE5.flip-coin-at-two",
@@ -14,16 +14,32 @@ class FlipCoinTaxOfficeProvider extends Client {
       provider
     );
   }
+
+  async bet(value: boolean) {
+    const tx = this.createTransaction({
+      method: {
+        name: "bet",
+        args: [`${value}`],
+      },
+    });
+    tx.sign("S1G2081040G2081040G2081040G208105NK8PE5");
+    return this.submitTransaction(tx);
+  }
 }
 
 describe("flip coin tax office contract test suite", () => {
   let provider: Provider;
-  let client: FlipCoinTaxOfficeProvider;
+  let client: FlipCoinClassicProvider;
 
   describe("syntax tests", () => {
     before(async () => {
       provider = await ProviderRegistry.createProvider();
-      client = new FlipCoinTaxOfficeProvider(provider);
+      client = new FlipCoinClassicProvider(provider);
+      await new Client(
+        "S1G2081040G2081040G2081040G208105NK8PE5.flip-coin",
+        "experiments/flip-coin.clar",
+        provider
+      ).deployContract();
       await new Client(
         "S1G2081040G2081040G2081040G208105NK8PE5.flip-coin-tax-office",
         "experiments/flip-coin-tax-office.clar",
@@ -38,7 +54,6 @@ describe("flip coin tax office contract test suite", () => {
 
     it("should have a valid syntax", async () => {
       await client.checkContract();
-      await client.deployContract();
     });
 
     after(async () => {
@@ -47,10 +62,30 @@ describe("flip coin tax office contract test suite", () => {
   });
 
   describe("basic tests", () => {
-    beforeEach(async () => {
+    before(async () => {
       provider = await ProviderRegistry.createProvider();
-      client = new FlipCoinTaxOfficeProvider(provider);
+      client = new FlipCoinClassicProvider(provider);
+      await new Client(
+        "S1G2081040G2081040G2081040G208105NK8PE5.flip-coin",
+        "experiments/flip-coin.clar",
+        provider
+      ).deployContract();
+      await new Client(
+        "S1G2081040G2081040G2081040G208105NK8PE5.flip-coin-tax-office",
+        "experiments/flip-coin-tax-office.clar",
+        provider
+      ).deployContract();
+      await new Client(
+        "S1G2081040G2081040G2081040G208105NK8PE5.flip-coin-jackpot",
+        "experiments/flip-coin-jackpot.clar",
+        provider
+      ).deployContract();
+
       await client.deployContract();
+    });
+
+    it("should bet on true", async () => {
+      console.log(await client.bet(true));
     });
 
     afterEach(async () => {
