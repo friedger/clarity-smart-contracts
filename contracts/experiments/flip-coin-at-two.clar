@@ -88,7 +88,7 @@
                     }
                   )
                   (if (map-insert amounts ((height block-height))  ((amount (+ amount amount))))
-                    (let (created-at: (get created-at (var-get next-slot)))
+                    (let ((created-at (get created-at (var-get next-slot))))
                       (begin
                         (map-insert matched-bets {created-at: created-at} {height: block-height})
                         (var-set next-slot new-slot)
