@@ -47,16 +47,16 @@ function processing() {
 describe("flip coin test suite", async () => {
   it("should deploy contracts", async () => {
     var contractName = "flip-coin";
-    deployContract(contractName, 1780);
+    await deployContract(contractName, 1780);
     await processing();
     var contractName = "flip-coin-tax-office";
-    deployContract(contractName, 224);
+    await deployContract(contractName, 224);
     await processing();
     var contractName = "flip-coin-jackpot";
-    deployContract(contractName, 3200);
+    await deployContract(contractName, 3200);
     await processing();
     var contractName = "flip-coin-at-two";
-    deployContract(contractName, 4723);
+    await deployContract(contractName, 4723);
     return;
   });
 });
