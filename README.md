@@ -1,7 +1,5 @@
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/friedger/clarity-smart-contracts)
 
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/friedger/clarity-smart-contracts)
-
 # Clarity Smart Contracts
 
 A collection of various smart contracts written in Clarity. They run on the [Stacks blockchain](https://docs.blockstack.org).
