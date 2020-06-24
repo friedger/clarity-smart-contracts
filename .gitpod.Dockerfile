@@ -8,8 +8,7 @@ ENV PATH="$HOME/tools/bin:$PATH"
 WORKDIR ~/tools
 RUN git clone https://github.com/lgalabru/clarity-repl.git
 
-WORKDIR ~/tools/clarity-repl
-RUN cargo install --bin clarity-repl --path .
+RUN cd clarity-repl; cargo install --bin clarity-repl --path .
 
 WORKDIR ~/tools
 RUN git clone https://github.com/blockstack/stacks-blockchain
