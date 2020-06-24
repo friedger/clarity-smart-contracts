@@ -2,19 +2,20 @@ FROM gitpod/workspace-full
 
 RUN git clone https://github.com/blockstack/stacks-blockchain.git
 
-WORKDIR /blockstack
+RUN yarn global add blockstack-cli --prefix /workspace/tools
 
-RUN yarn global add blockstack-cli --prefix /blockstack
+ENV PATH=/workspace/tools/bin:$PATH
 
+WORKDIR /workspace/tools
 RUN git clone https://github.com/lgalabru/clarity-repl.git
 
-WORKDIR /blockstack/clarity-repl
+WORKDIR /workspace/tools/clarity-repl
 RUN cargo install --bin clarity-repl --path .
 
-WORKDIR /blockstack
+WORKDIR /workspace/tools
 RUN git clone https://github.com/blockstack/stacks-blockchain
 
-WORKDIR /blockstack/stacks-blockchain
+WORKDIR /workspace/tools/stacks-blockchain
 RUN cd testnet/stacks-node; cargo build --bin stacks-node;
 
 
