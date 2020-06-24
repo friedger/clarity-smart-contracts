@@ -1,6 +1,7 @@
 FROM gitpod/workspace-full
 
 USER gitpod
+RUN mkdir ~/tools
 RUN yarn global add blockstack-cli --prefix ~/tools
 
 ENV PATH="$HOME/tools/bin:$PATH"
