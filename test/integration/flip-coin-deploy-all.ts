@@ -18,11 +18,13 @@ import {
   makeContractCall,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://127.0.0.1:20443";
+const STACKS_API_URL = "http://testnet-master.blockstack.org:20443";
 const network = new StacksTestnet();
 network.coreApiUrl = STACKS_API_URL;
 
-const keys = JSON.parse(fs.readFileSync("./keys.json").toString());
+const keys = JSON.parse(
+  fs.readFileSync("../../blockstack/stacks-blockchain/keychain.json").toString()
+).paymentKeyInfo;
 async function deployContract(contractName, fee) {
   const codeBody = fs
     .readFileSync(`./contracts/experiments/${contractName}.clar`)
@@ -31,7 +33,7 @@ async function deployContract(contractName, fee) {
   const transaction = await makeSmartContractDeploy({
     contractName,
     codeBody,
-    senderKey: keys.secretKey,
+    senderKey: keys.privateKey,
     fee: new BigNum(fee),
     network,
   });
@@ -46,6 +48,7 @@ function processing() {
 }
 describe("flip coin test suite", async () => {
   it("should deploy contracts", async () => {
+    /*
     var contractName = "flip-coin";
     await deployContract(contractName, 1780);
     await processing();
@@ -55,8 +58,9 @@ describe("flip coin test suite", async () => {
     var contractName = "flip-coin-jackpot";
     await deployContract(contractName, 3200);
     await processing();
+    */
     var contractName = "flip-coin-at-two";
-    await deployContract(contractName, 4723);
+    await deployContract(contractName, 4788);
     return;
   });
 });
