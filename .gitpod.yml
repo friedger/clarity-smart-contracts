@@ -3,3 +3,8 @@ image:
 
 tasks:
   - init: yarn install
+
+vscode:
+  extensions:
+    - blockstack.clarity@0.0.5:rBhb1NsIYs1/wpFyiyXNdA==
+    - lgalabru.clarity-lsp@0.2.66:PEBgheot/B02RfVLfwbzYg==
