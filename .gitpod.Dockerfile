@@ -2,7 +2,7 @@ FROM gitpod/workspace-full
 
 USER gitpod
 RUN mkdir ~/tools
-RUN yarn global add blockstack-cli --prefix ~/tools
+RUN npm install --global git://github.com/blockstack/cli-blockstack.git#feature/stacks-2.0-tx --prefix ~/tools
 
 ENV PATH="$HOME/tools/bin:$PATH"
 ENV PATH="$HOME/.cargo/bin:$PATH"
