@@ -29,6 +29,13 @@ class ListProvider extends Client {
     });
     return await this.submitQuery(tx);
   }
+
+  async bar(): Promise<Receipt> {
+    const q = this.createTransaction({
+      method: { name: "bar", args: [] },
+    });
+    return await this.submitQuery(q);
+  }
 }
 
 describe("list contract test suite", () => {
@@ -70,6 +77,11 @@ describe("list contract test suite", () => {
       assert(result.success, "but failed");
     });
 
+    it("should foo bar", async () => {
+      const result = await client.bar();
+      console.log(result);
+      assert(result.success, "but failed");
+    });
     afterEach(async () => {
       await provider.close();
     });

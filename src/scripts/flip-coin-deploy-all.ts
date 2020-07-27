@@ -1,22 +1,10 @@
 const BigNum = require("bn.js");
 import * as fs from "fs";
+const fetch = require("node-fetch");
 import {
-  FungibleConditionCode,
-  makeStandardSTXPostCondition,
-  makeSTXTokenTransfer,
   StacksTestnet,
   broadcastTransaction,
   makeContractDeploy,
-  createStacksPublicKey,
-  createStacksPrivateKey,
-  pubKeyfromPrivKey,
-  createAddress,
-  addressToString,
-  addressFromPublicKeys,
-  AddressVersion,
-  AddressHashMode,
-  makeContractCall,
-  TxBroadcastResult,
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
 } from "@blockstack/stacks-transactions";
@@ -30,7 +18,7 @@ const keys = JSON.parse(
   fs.readFileSync("../../blockstack/stacks-blockchain/keychain.json").toString()
 ).paymentKeyInfo;
 
-async function deployContract(contractName, fee): Promise<TxBroadcastResultOk> {
+async function deployContract(contractName: string, fee: number) {
   const codeBody = fs
     .readFileSync(`./contracts/experiments/${contractName}.clar`)
     .toString();
@@ -62,11 +50,11 @@ async function deployContract(contractName, fee): Promise<TxBroadcastResultOk> {
   return result as TxBroadcastResultOk;
 }
 
-function timeout(ms) {
+function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function processing(tx: String, count: number = 0) {
+async function processing(tx: String, count: number = 0): Promise<boolean> {
   var result = await fetch(
     `${SIDECAR_API_URL}/sidecar/v1/tx/${tx.substr(1, tx.length - 2)}`
   );
@@ -83,20 +71,29 @@ async function processing(tx: String, count: number = 0) {
   return processing(tx, count + 1);
 }
 
-describe("flip coin test suite", async () => {
-  it("should deploy contracts", async () => {
-    var contractName = "flip-coin";
-    await deployContract(contractName, 1780);
+async function deployFlipCoin() {
+  var contractName = "flip-coin";
+  return deployContract(contractName, 1780);
+}
 
-    var contractName = "flip-coin-tax-office";
-    await deployContract(contractName, 224);
+async function deployFlipCoinTaxOffice() {
+  var contractName = "flip-coin-tax-office";
+  return deployContract(contractName, 224);
+}
 
-    var contractName = "flip-coin-jackpot";
-    await deployContract(contractName, 3200);
+async function deployFlipCoinJackpot() {
+  var contractName = "flip-coin-jackpot";
+  return deployContract(contractName, 3200);
+}
 
-    var contractName = "flip-coin-at-two";
-    await deployContract(contractName, 4788);
+async function deployFlipCoinAtTwo() {
+  var contractName = "flip-coin-at-two";
+  return deployContract(contractName, 4788);
+}
 
-    return;
-  });
-});
+(async () => {
+  await deployFlipCoin();
+  await deployFlipCoinTaxOffice();
+  await deployFlipCoinJackpot();
+  await deployFlipCoinAtTwo();
+})();
