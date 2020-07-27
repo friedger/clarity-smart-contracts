@@ -15,10 +15,10 @@
 
 (define-public (hodl (amount uint))
   (begin
-    (print (ft-transfer? spendable-token amount tx-sender (as-contract tx-sender)))
+    (unwrap-panic (ft-transfer? spendable-token amount tx-sender (as-contract tx-sender)))
     (let ((original-sender tx-sender))
-    (print (as-contract (ft-transfer? hodl-token amount tx-sender original-sender)))
-  )
+     (ok (unwrap-panic (as-contract (ft-transfer? hodl-token amount tx-sender original-sender))))
+    )
   )
 )
 

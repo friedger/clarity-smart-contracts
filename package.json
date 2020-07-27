@@ -9,7 +9,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=13"
+    "node": ">=12"
   },
   "scripts": {
     "hodl": "mocha 'test/integration/hodl-token.ts'",
