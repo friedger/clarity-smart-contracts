@@ -1,7 +1,7 @@
 ;; Simple Token that users can hodl
 
-(define-fungible-token spendable-token)
-(define-fungible-token hodl-token)
+(define-fungible-token spendable-token u1000000)
+(define-fungible-token hodl-token u1000000)
 
 
 ;; Public functions
@@ -49,11 +49,19 @@
 ;; Mint new tokens.
 (define-private (mint (account principal) (amount uint))
     (begin
-      (ft-mint? spendable-token amount account)
-      (ft-mint? hodl-token amount (as-contract tx-sender))
+      (unwrap-panic (ft-mint? spendable-token amount account))
+      (unwrap-panic (ft-mint? hodl-token amount (as-contract tx-sender)))
       (ok amount)))
+
+(define-public (buy-tokens (amount uint))
+  (begin
+    (unwrap-panic (stx-transfer? amount tx-sender (as-contract tx-sender)))
+    (mint tx-sender amount)
+  )
+)
 
 ;; Initialize the contract
 (begin
-  (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M u20)
-  (mint 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9 u10))
+  (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M u1000)
+  (mint 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9 u1000)
+)

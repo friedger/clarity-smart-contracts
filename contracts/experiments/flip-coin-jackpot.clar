@@ -91,6 +91,11 @@
   )
 )
 
+(define-private (hodl-check)
+  ;; (< u1000 (contract-call? ST12EY99GS4YKP0CP2CFW6SEPWQ2CGVRWK5GHKDRV.hodl-token hodl-balance-of tx-sender))
+  true
+)
+
 (impl-trait .flip-coin-tax-office.tax-office-trait)
 
 (define-public (pay-tax (amount uint))

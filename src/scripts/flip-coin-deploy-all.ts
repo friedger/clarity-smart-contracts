@@ -27,7 +27,6 @@ async function deployContract(contractName: string, fee: number) {
     contractName,
     codeBody,
     senderKey: keys.privateKey,
-    fee: new BigNum(fee),
     network,
   });
 
