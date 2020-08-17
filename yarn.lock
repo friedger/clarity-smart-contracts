@@ -2,20 +2,20 @@
 # yarn lockfile v1
 
 
-"@blockstack/clarity-native-bin@^0.1.16":
-  version "0.1.16"
-  resolved "https://registry.yarnpkg.com/@blockstack/clarity-native-bin/-/clarity-native-bin-0.1.16.tgz#8a0656626f98eb9487e6db6ea3948582184acfa7"
-  integrity sha512-wYKoq+8JzFwR9tKEzHRkpqRa4cdYui/y1rtvgkt2UqlwtP6oUNKSb7qkkjsa449QENS3UejugXj8R59gOg+gYQ==
+"@blockstack/clarity-native-bin@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@blockstack/clarity-native-bin/-/clarity-native-bin-0.2.0.tgz#78d8d22637106f253d2fa688deef5fa00c947ab2"
+  integrity sha512-YZDkf44Rf02oMIrgIqALrEMB5oIKHi7kBs8nLL81ODWl8B5VOgw5kPXCFimL7V6+QUap0ZEY0aQRZ3xXu4vnJQ==
   dependencies:
     fs-extra "^8.0.1"
     node-fetch "^2.6.0"
     semver "^6.1.1"
     tar "^4.4.8"
 
-"@blockstack/clarity@^0.1.16":
-  version "0.1.16"
-  resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.1.16.tgz#75483365bc28d25eabb6b95df4ebafa5f67954fb"
-  integrity sha512-3XuPsQCz+wfSQHLVGhdfgiCVsZh2mkSZpDiV+TguoYOWtzAOZJQSoL0CdAkri0rDe5r+AM4s57lpukqgraRTaA==
+"@blockstack/clarity@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.2.0.tgz#fb5bc977bf92231102c76375d622d61693a71943"
+  integrity sha512-Hk+zfQ4YnfBxghcbYmVbibwbmc+uolClQVHea/vcIWQQjI8l171WW76Yng4k3jZq1rPCt5ZOgPFosAtBp3kQ4g==
 
 "@blockstack/stacks-transactions@^0.5.1":
   version "0.5.1"

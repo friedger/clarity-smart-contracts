@@ -18,9 +18,13 @@ const keys = JSON.parse(
   fs.readFileSync("../../blockstack/stacks-blockchain/keychain.json").toString()
 ).paymentKeyInfo;
 
-async function deployContract(contractName: string, fee: number) {
+async function deployContract(
+  contractName: string,
+  fee: number,
+  path: string = "experiments"
+) {
   const codeBody = fs
-    .readFileSync(`./contracts/experiments/${contractName}.clar`)
+    .readFileSync(`./contracts/${path}/${contractName}.clar`)
     .toString();
 
   const transaction = await makeContractDeploy({
@@ -90,9 +94,15 @@ async function deployFlipCoinAtTwo() {
   return deployContract(contractName, 4788);
 }
 
+async function deployHodlToken() {
+  var contractName = "hodl-token";
+  return deployContract(contractName, 1, "tokens");
+}
+
 (async () => {
   await deployFlipCoin();
   await deployFlipCoinTaxOffice();
   await deployFlipCoinJackpot();
   await deployFlipCoinAtTwo();
+  await deployHodlToken();
 })();

@@ -30,8 +30,8 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
-    "@blockstack/clarity": "^0.1.16",
-    "@blockstack/clarity-native-bin": "^0.1.16",
+    "@blockstack/clarity": "^0.2.0",
+    "@blockstack/clarity-native-bin": "^0.2.0",
     "@blockstack/stacks-transactions": "^0.5.1",
     "bn.js": "^5.1.2",
     "node-fetch": "^2.6.0"

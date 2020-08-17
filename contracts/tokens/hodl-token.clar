@@ -23,12 +23,13 @@
 )
 
 (define-public (unhodl (amount uint))
-(begin
-  (print (ft-transfer? hodl-token amount tx-sender (as-contract tx-sender)))
-  (let ((original-sender tx-sender))
-    (print (as-contract (ft-transfer? spendable-token amount tx-sender original-sender)))
+  (begin
+    (print (ft-transfer? hodl-token amount tx-sender (as-contract tx-sender)))
+    (let ((original-sender tx-sender))
+      (print (as-contract (ft-transfer? spendable-token amount tx-sender original-sender)))
+    )
   )
-))
+)
 
 (define-read-only (balance-of (owner principal))
    (+ (ft-get-balance spendable-token owner) (ft-get-balance hodl-token owner))
@@ -36,6 +37,10 @@
 
 (define-read-only (hodl-balance-of (owner principal))
   (ft-get-balance hodl-token owner)
+)
+
+(define-read-only (spendable-balance-of (owner principal))
+  (ft-get-balance spendable-token owner)
 )
 
 (define-read-only (get-spendable-in-bank)
@@ -55,13 +60,12 @@
 
 (define-public (buy-tokens (amount uint))
   (begin
-    (unwrap-panic (stx-transfer? amount tx-sender (as-contract tx-sender)))
+    (unwrap-panic (stx-transfer? amount tx-sender 'ST12EY99GS4YKP0CP2CFW6SEPWQ2CGVRWK5GHKDRV))
     (mint tx-sender amount)
   )
 )
 
 ;; Initialize the contract
 (begin
-  (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M u1000)
-  (mint 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9 u1000)
+  (mint 'ST12EY99GS4YKP0CP2CFW6SEPWQ2CGVRWK5GHKDRV u990000)
 )
