@@ -26,10 +26,14 @@ See also [original Clarity tutorials](https://github.com/blockstack/clarity-js-s
 ## Other Repositories with smart contracts
 
 - [Swapr](https://github.com/psq/swapr) Trustless token exchange.
+- [Flexr](https://github.com/psq/flexr) Token with an elastic supply, guaranteed by design to be uncorrelated to other tokens. 
+- [Stackstarter](https://github.com/MarvinJanssen/stackstarter) Crowdfunding
 - [Marketplace](https://github.com/friedger/clarity-marketplace) Marketplace (NFTs that can get disabled + market).
 - [Blind Poll](https://github.com/zexxlin/clarity-blind-poll) Anonymous polls, where all submitted answers will be sealed until they're revealed by participants after the poll is closed.
 - [Highscore](https://github.com/xmakina/clarity-high-score) Simple list of submitted scores.
 - [Redistribution](https://github.com/xmakina/redistribution-contract) Pot for redistributing funds.
 - [Endless list](https://github.com/xmakina/endless-list) A bottomless, paged, list of items.
 
-More examples on the [list of winners](https://community.blockstack.org/clarity-winners#overall) of Clarity Hackathon 1.
+More examples on 
+* the [list of winners](https://community.blockstack.org/clarity-winners#overall) of Clarity Hackathon 1.
+* the [list of winners](https://blog.blockstack.org/announcing-the-winners-of-clarity-hack/) of Clarity Hack of Stacks 2.0 Hackathon Series.
