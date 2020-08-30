@@ -33,6 +33,7 @@ See also [original Clarity tutorials](https://github.com/blockstack/clarity-js-s
 - [Highscore](https://github.com/xmakina/clarity-high-score) Simple list of submitted scores.
 - [Redistribution](https://github.com/xmakina/redistribution-contract) Pot for redistributing funds.
 - [Endless list](https://github.com/xmakina/endless-list) A bottomless, paged, list of items.
+- [Stacks loans](https://github.com/richardmichel/stacks-loans) Loans with fixed interest rates.
 
 More examples on 
 * the [list of winners](https://community.blockstack.org/clarity-winners#overall) of Clarity Hackathon 1.
