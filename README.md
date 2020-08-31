@@ -2,11 +2,11 @@
 
 # Clarity Smart Contracts
 
-A collection of various smart contracts written in Clarity. They run on the [Stacks blockchain](https://docs.blockstack.org).
+A collection of various smart contracts written in [Clarity](https://docs.blockstack.org/core/smart/clarityref). They run on the [Stacks blockchain](https://docs.blockstack.org).
 
 See also [original Clarity tutorials](https://github.com/blockstack/clarity-js-sdk/tree/master/packages/clarity-tutorials) by Blockstack.
 
-## Repositories with smart contracts
+## Repositories with Smart Contracts
 
 - [Swapr](https://github.com/psq/swapr) Trustless token exchange.
 - [Flexr](https://github.com/psq/flexr) Token with an elastic supply, guaranteed by design to be uncorrelated to other tokens. 
@@ -38,7 +38,7 @@ This repo is gitpod ready. Click the gitpod button to start editing and running 
 |    +-- unit (Test that run on clarity VM only)
 ```
 
-## Documented Contracts
+### Documented Contracts
 
 [Escrow contract](docs/escrow.md): Simple token transfer via 3rd party (contract account). [Video of demo](https://www.youtube.com/watch?v=uZH1V-FNJIs)
 
