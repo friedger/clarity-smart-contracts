@@ -24,6 +24,9 @@ More examples on
 
 
 ## Smart Contracts in this Repository
+
+This repo is gitpod ready. Click the gitpod button to start editing and running the contracts. (Read more about [Clarity Web IDE (gitpod based)](https://friedger.github.io/clarity-web-ide/))
+
 ```
 .
 +-- contracts
