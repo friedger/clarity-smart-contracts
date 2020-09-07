@@ -20,6 +20,11 @@
 ;; store information about tax office to pay tax on prize immediately
 (use-trait tax-office-trait .flip-coin-tax-office.tax-office-trait)
 
+;; return next slot
+(define-read-only (get-next-slot)
+  (var-get next-slot)
+)
+
 ;; returns how much stx were bet at the given block
 (define-read-only (get-amount-at (height uint))
   (match (map-get? amounts ((height height)))

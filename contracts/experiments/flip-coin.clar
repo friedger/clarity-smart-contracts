@@ -46,8 +46,3 @@
   )
 )
 
-
-;; returns the random value based on the current block
-(define-read-only (flip-coin)
-  (flip-coin-at block-height)
-)

@@ -5,6 +5,9 @@
 
 
 ;; Public functions
+(define-public (name)
+  (ok "Hodl")
+)
 
 ;; Transfers tokens to a specified principal.
 (define-public (transfer (recipient principal) (amount uint))

@@ -62,15 +62,22 @@ async function processing(tx: String, count: number = 0): Promise<boolean> {
     `${SIDECAR_API_URL}/sidecar/v1/tx/${tx.substr(1, tx.length - 2)}`
   );
   var value = await result.json();
-  console.log(value);
+  console.log(count);
   if (value.tx_status === "success") {
+    console.log(`transaction ${tx} processed`);
+    console.log(value);
     return true;
   }
+  if (value.tx_status === "pending") {
+    console.log(value);
+  }
   if (count > 30) {
+    console.log("failed after 30 trials");
+    console.log(value);
     return false;
   }
 
-  await timeout(10000);
+  await timeout(50000);
   return processing(tx, count + 1);
 }
 
