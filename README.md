@@ -12,6 +12,7 @@ See also [original Clarity tutorials](https://github.com/blockstack/clarity-js-s
 - [Flexr](https://github.com/psq/flexr) Token with an elastic supply, guaranteed by design to be uncorrelated to other tokens. 
 - [Stackstarter](https://github.com/MarvinJanssen/stackstarter) Crowdfunding
 - [Marketplace](https://github.com/friedger/clarity-marketplace) Marketplace (NFTs that can get disabled + market).
+- [Profit sharing token](https://github.com/friedger/clarity-profit-sharing-token) Token with included profit sharing on resale.
 - [Blind Poll](https://github.com/zexxlin/clarity-blind-poll) Anonymous polls, where all submitted answers will be sealed until they're revealed by participants after the poll is closed.
 - [Highscore](https://github.com/xmakina/clarity-high-score) Simple list of submitted scores.
 - [Redistribution](https://github.com/xmakina/redistribution-contract) Pot for redistributing funds.
