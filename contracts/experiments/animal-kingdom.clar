@@ -1,57 +1,50 @@
-(define-non-fungible-token animal-kingdom-token uint)
+(define-non-fungible-token kingdom-token uint)
 
 ;; Storage
 (define-map rulers
-  ((token-id uint))
+  ((kingdom-id uint))
   ((domain (buff 255))
-   (ruler (buff 255))
-  )
-)
+   (ruler principal)))
 
-(define-data-var current-id uint u0)
-(define-data-var token-ids (list 10 uint) (list))
+(define-map lookup ((domain (buff 255))) ((kingdom-id uint)))
 
-;; Internals
+(define-data-var last-kingdom-id uint u0)
 
-;; Gets the owner of the specified token ID.
-(define-private (owner-of? (token-id uint))
-  (nft-get-owner? animal-kingdom-token token-id)
-)
-
-(define-private (is-owner (ruler principal) (token-id uint))
+(define-private (is-owner (ruler principal) (kingdom-id uint))
   (is-eq ruler
        ;; if no owner, return false
-       (unwrap! (owner-of? token-id) false)
+       (unwrap! (owner-of? kingdom-id) false)))
+
+(define-data-var panic-trigger (optional bool) none)
+
+(define-private (assert-panic (value bool))
+   (if value
+    true
+    (unwrap-panic (var-get panic-trigger))
   )
-)
-
-(define-read-only (get-info)
-  (ok { current-id: (var-get current-id) })
-)
-
-(define-read-only (get-tokens)
-  (ok (map owner-of? (var-get token-ids)))
 )
 
 ;; Mint new tokens.
-(define-public (mint-next (ruler principal))
-    (if (is-eq tx-sender 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)
-        (let ((next-id (+ (var-get current-id) u1)))
-        (begin (print (as-max-len? (append (var-get token-ids) next-id) u10))
-           (let ((new-list (unwrap! (as-max-len? (append (var-get token-ids) next-id) u10) (err u100))))
-              (begin
-                (var-set current-id next-id)
-                (var-set token-ids new-list)
-                (match (nft-mint? animal-kingdom-token next-id ruler)
-                  success (ok next-id)
-                  error (err u2)
-                )
+(define-public (register (domain (buff 255)))
+    (let ((kingdom-id (+ (var-get last-kingdom-id) u1)))
+      (begin
+          (var-set last-kingdom-id kingdom-id)
+          (match (nft-mint? kingdom-token kingdom-id tx-sender)
+            success (begin
+                (assert-panic (map-insert rulers {kingdom-id: kingdom-id} {domain: domain, ruler: tx-sender}))
+                (assert-panic (map-insert lookup {domain: domain} {kingdom-id: kingdom-id}))
+                (ok kingdom-id)
               )
-           )
-        )
-      )
-      (err u1)
-    )
-)
+            error (err u2)))))
 
-;; Initialize the contract
+(define-read-only (get-info)
+  (ok { last-kingdom-id: (var-get last-kingdom-id)}))
+
+
+;; Gets the owner of the specified token ID.
+(define-read-only (owner-of? (kingdom-id uint))
+  (nft-get-owner? kingdom-token kingdom-id))
+
+
+(define-read-only (owner-of-domain? (domain (buff 255)))
+  (owner-of? (unwrap-panic (get kingdom-id (map-get? lookup {domain: domain})))))

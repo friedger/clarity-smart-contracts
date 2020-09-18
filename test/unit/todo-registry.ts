@@ -8,39 +8,39 @@ import {
 } from "@blockstack/clarity";
 import { fail } from "assert";
 
-class PanicProvider extends Client {
+class TodoRegistryProvider extends Client {
   constructor(provider: Provider) {
     super(
       "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M.panic",
-      "experiments/panic.clar",
+      "experiments/todo-registry.clar",
       provider
     );
   }
 
-  async panic(): Promise<Receipt> {
+  async register(name: string, url: string): Promise<Receipt> {
     const tx = this.createTransaction({
-      method: { name: "panic", args: [] },
+      method: { name: "register", args: [`"${name}"`, `"${url}"`] },
     });
     await tx.sign("ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M");
     return await this.submitTransaction(tx);
   }
 
-  async panicReadOnly(): Promise<Receipt> {
+  async ownerOf(name: string): Promise<Receipt> {
     const q = this.createQuery({
-      method: { name: "panic-read-only", args: [] },
+      method: { name: "owner-of", args: [`"${name}"`] },
     });
     return await this.submitQuery(q);
   }
 }
 
-describe("panic contract test suite", () => {
+describe("todo registry contract test suite", () => {
   let provider: Provider;
-  let client: PanicProvider;
+  let client: TodoRegistryProvider;
 
   describe("syntax tests", () => {
     before(async () => {
       provider = await ProviderRegistry.createProvider();
-      client = new PanicProvider(provider);
+      client = new TodoRegistryProvider(provider);
     });
 
     it("should have a valid syntax", async () => {
@@ -54,28 +54,30 @@ describe("panic contract test suite", () => {
   });
 
   describe("basic tests", () => {
-    beforeEach(async () => {
+    before(async () => {
       provider = await ProviderRegistry.createProvider();
-      client = new PanicProvider(provider);
+      client = new TodoRegistryProvider(provider);
       await client.deployContract();
     });
 
-    it("should panic", async () => {
-      const result = await client.panic();
-      assert(!result.success, "but succeeded");
-      assert(result.error["name"] === "ExecutionError");
+    it("should register", async () => {
+      const result = await client.register(
+        "username.id",
+        "https://example.com/todo"
+      );
+      assert(result.success, "but failed");
     });
 
-    it("should panic read-only", async () => {
-      try {
-        await client.panicReadOnly();
-        fail("should have thrown an error");
-      } catch (e) {
-        assert(e.name === "ExecutionError");
-      }
+    it("should find the owner", async () => {
+      const result = await client.ownerOf("username.id");
+      assert(result.success, "but failed");
+      assert.equal(
+        result.result,
+        "(some ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)"
+      );
     });
 
-    afterEach(async () => {
+    after(async () => {
       await provider.close();
     });
   });

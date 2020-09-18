@@ -30,7 +30,9 @@ describe("Animal kingdoms contract test suite", () => {
     });
 
     it("should mint a new token", async () => {
-      const result = await client.mintNext(alice, { sender: owner });
+      const result = await client.register("planet.friedger.de", {
+        sender: owner,
+      });
       assert.equal(result.success, true);
     });
   });

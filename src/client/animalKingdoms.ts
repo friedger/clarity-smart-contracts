@@ -9,9 +9,9 @@ export class AnimalKingdomsClient extends Client {
     );
   }
 
-  async mintNext(ruler: string, params: { sender: string }): Promise<Receipt> {
+  async register(domain: string, params: { sender: string }): Promise<Receipt> {
     const tx = this.createTransaction({
-      method: { name: "mint-next", args: [`'${ruler}`] },
+      method: { name: "register", args: [`"${domain}"`] },
     });
     await tx.sign(params.sender);
     const res = await this.submitTransaction(tx);
