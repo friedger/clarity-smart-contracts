@@ -9,8 +9,8 @@ import {
   TxBroadcastResultRejected,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://testnet-master.blockstack.org:20443";
-const SIDECAR_API_URL = "https://sidecar.staging.blockstack.xyz";
+const STACKS_API_URL = "http://localhost:20443";
+const SIDECAR_API_URL = "https://stacks-node-api.krypton.blockstack.org";
 const network = new StacksTestnet();
 network.coreApiUrl = STACKS_API_URL;
 
@@ -59,7 +59,7 @@ function timeout(ms: number) {
 
 async function processing(tx: String, count: number = 0): Promise<boolean> {
   var result = await fetch(
-    `${SIDECAR_API_URL}/sidecar/v1/tx/${tx.substr(1, tx.length - 2)}`
+    `${SIDECAR_API_URL}/extended/v1/tx/${tx.substr(1, tx.length - 2)}`
   );
   var value = await result.json();
   console.log(count);
