@@ -9,8 +9,8 @@ import {
   TxBroadcastResultRejected,
 } from "@blockstack/stacks-transactions";
 
-const STACKS_API_URL = "http://localhost:20443";
-const SIDECAR_API_URL = "https://stacks-node-api.krypton.blockstack.org";
+const STACKS_CORE_API_URL = "http://testnet-master.blockstack.org:20443";
+const STACKS_API_URL = "https://stacks-node-api.blockstack.org";
 const network = new StacksTestnet();
 network.coreApiUrl = STACKS_API_URL;
 
@@ -23,6 +23,7 @@ async function deployContract(
   fee: number,
   path: string = "experiments"
 ) {
+  console.log(`deploying ${contractName}`);
   const codeBody = fs
     .readFileSync(`./contracts/${path}/${contractName}.clar`)
     .toString();
@@ -39,6 +40,7 @@ async function deployContract(
     if (
       (result as TxBroadcastResultRejected).reason === "ContractAlreadyExists"
     ) {
+      console.log(`${contractName} already deployed`);
       return "" as TxBroadcastResultOk;
     } else {
       throw new Error(
@@ -59,7 +61,7 @@ function timeout(ms: number) {
 
 async function processing(tx: String, count: number = 0): Promise<boolean> {
   var result = await fetch(
-    `${SIDECAR_API_URL}/extended/v1/tx/${tx.substr(1, tx.length - 2)}`
+    `${STACKS_API_URL}/extended/v1/tx/${tx.substr(1, tx.length - 2)}`
   );
   var value = await result.json();
   console.log(count);
@@ -71,8 +73,8 @@ async function processing(tx: String, count: number = 0): Promise<boolean> {
   if (value.tx_status === "pending") {
     console.log(value);
   }
-  if (count > 30) {
-    console.log("failed after 30 trials");
+  if (count > 2) {
+    console.log("failed after 2 trials");
     console.log(value);
     return false;
   }

@@ -17,10 +17,12 @@ import * as fs from "fs";
 const local = false;
 const mocknet = false;
 
-const STACKS_API_URL = local
+const STACKS_CORE_URL = local
   ? "http://localhost:20443"
   : "http://testnet-master.blockstack.org:20443";
-const SIDECAR_API_URL = "https://stacks-node-api.krypton.blockstack.org";
+const STACKS_API_URL = local
+  ? "http://localhost:3999"
+  : "https://stacks-node-api.blockstack.org";
 const network = new StacksTestnet();
 network.coreApiUrl = STACKS_API_URL;
 
@@ -44,6 +46,7 @@ const keys = mocknet
 const secretKey = keys ? keys.privateKey : keys1.secretKey;
 const contractAddress = keys ? keys.address.STACKS : keys1.stacksAddress;
 
+// get hash
 const c32 = require("c32check");
 const hash = c32.c32addressDecode(contractAddress)[1];
 console.log(hash);
@@ -98,7 +101,7 @@ async function processingWithSidecar(
   count: number = 0
 ): Promise<boolean> {
   var result = await fetch(
-    `${SIDECAR_API_URL}/extended/v1/tx/${tx.substr(1, tx.length - 2)}`
+    `${STACKS_API_URL}/extended/v1/tx/${tx.substr(1, tx.length - 2)}`
   );
   var value = await result.json();
   console.log(count);
@@ -134,7 +137,7 @@ async function doStacking() {
     contractName: "pox",
     functionName: "stack-stx",
     functionArgs: [
-      uintCV(3.3e15),
+      uintCV(2000999994411),
       tupleCV({
         hashbytes: bufferCV(Buffer.from(hash, "hex")),
         version: bufferCV(Buffer.from("00", "hex")),

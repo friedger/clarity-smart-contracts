@@ -61,7 +61,7 @@ A simple web UI allows to places bets at [Speed Spend](https://speed-spend.netli
 
 When places at bet the transaction id is returned. This tx id is needed to determine the winner:
 
-1. Find the block height of the bet at https://sidecar.staging.blockstack.xyz/sidecar/v1/tx/{txid} with the returned tx id.
+1. Find the block height of the bet at https://stacks-node-api.blockstack.org/extended/v1/tx/{txid} with the returned tx id.
 1. Edit `tests/integration/flip-coin-x.ts` and replace the `betAtHeight` with the block height of the bet. Use an coreApiUrl of the testnet.
 1. Run `yarn mocha tests/integration/flip-coin-x.ts` to see who won what prize.
 

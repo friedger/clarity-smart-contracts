@@ -1,11 +1,9 @@
 const BigNum = require("bn.js");
 import {
   makeContractCall,
-  TransactionVersion,
-  ChainID,
-  bufferCV,
   StacksTestnet,
   broadcastTransaction,
+  bufferCVFromString,
 } from "@blockstack/stacks-transactions";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
@@ -18,7 +16,7 @@ describe("status contract test suite", async () => {
       contractAddress: "STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6",
       contractName: "status",
       functionName: "write-status!",
-      functionArgs: [bufferCV(new Buffer("My name is Peter"))],
+      functionArgs: [bufferCVFromString("My name is Peter")],
       fee: new BigNum(183),
       senderKey:
         "f679bd39a4e66c78ed47ee0965a7b2d6be13bbbf1a6bcc4f5e73a3657d985fe401",
