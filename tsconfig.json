@@ -1,9 +1,8 @@
-
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2017",
-    "lib": ["es2017"],
+    "target": "es2019",
+    "lib": ["es2019"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "strict": true,
@@ -11,10 +10,6 @@
     "sourceMap": true,
     "noEmit": true
   },
-  "include": [
-    "tests"
-  ],
-  "exclude": [
-    "node_modules",
-  ]
+  "include": ["tests"],
+  "exclude": ["node_modules"]
 }

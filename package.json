@@ -7,9 +7,8 @@
   },
   "repository": "https://github.com/friedger/oi-license.git",
   "private": true,
-  "type": "module",
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   },
   "scripts": {
     "hodl": "mocha 'test/integration/hodl-token.ts'",

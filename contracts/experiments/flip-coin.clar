@@ -5,6 +5,7 @@
 
 ;; buffer of all even characters
 (define-constant even-buffer 0x00020406080a0c0e10121416181a1c1e20222426282a2c2e30323436383a3c3e40424446484a4c4e50525456585a5c5e60626466686a6c6e70727476787a7c7e80828486888a8c8e90929496989a9c9ea0a2a4a6a8aaacaeb0b2b4b6b8babcbec0c2c4c6c8caccced0d2d4d6d8dadcdee0e2e4e6e8eaecee)
+(define-constant zero 0x00)
 
 ;; private functions
 
@@ -33,7 +34,7 @@
 ;; checks property of last byte of given buffer
 ;; returns true if the last byte of the hash is even
 (define-read-only (is-last-even (hash (buff 32)) )
-  (let ((last-value  (fold last hash "0")))
+  (let ((last-value  (fold last hash zero)))
     (even last-value)
   )
 )
