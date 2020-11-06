@@ -9,7 +9,7 @@ import {
   trueCV,
   makeContractSTXPostCondition,
   contractPrincipalCV,
-} from "@blockstack/stacks-transactions";
+} from "@stacks/transactions";
 import BN from "bn.js";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";

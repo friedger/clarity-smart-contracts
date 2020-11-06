@@ -9,7 +9,7 @@ import {
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
   uintCV,
-} from "@blockstack/stacks-transactions";
+} from "@stacks/transactions";
 
 const fetch = require("node-fetch");
 import * as fs from "fs";

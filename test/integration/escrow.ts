@@ -11,7 +11,7 @@ import {
   makeContractSTXPostCondition,
   StacksTestnet,
   broadcastTransaction,
-} from "@blockstack/stacks-transactions";
+} from "@stacks/transactions";
 
 const STACKS_API_URL = "http://localhost:20443";
 

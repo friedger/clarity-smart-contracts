@@ -29,10 +29,10 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
-    "@blockstack/clarity": "^0.2.0",
-    "@blockstack/clarity-native-bin": "^0.2.0",
-    "@blockstack/stacks-transactions": "^0.7.0",
+    "@blockstack/clarity": "^0.3.0",
+    "@blockstack/clarity-native-bin": "^0.3.0",
+    "@stacks/transactions": "^1.0.0-beta.9",
     "bn.js": "^5.1.3",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.1"
   }
 }

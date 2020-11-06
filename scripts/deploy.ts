@@ -8,7 +8,7 @@ import {
   StacksTransaction,
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
-} from "@blockstack/stacks-transactions";
+} from "@stacks/transactions";
 import * as fs from "fs";
 
 import { ADDR1, testnetKeyMap } from "./mocknet";

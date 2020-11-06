@@ -1,7 +1,4 @@
-import {
-  pubKeyfromPrivKey,
-  publicKeyToString,
-} from "@blockstack/stacks-transactions";
+import { pubKeyfromPrivKey, publicKeyToString } from "@stacks/transactions";
 
 export const ADDR1 = "STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6";
 export const ADDR2 = "ST11NJTTKGVT6D1HY4NJRVQWMQM7TVAR091EJ8P2Y";

@@ -9,7 +9,7 @@ import {
   UIntCV,
   OptionalCV,
   addressToString,
-} from "@blockstack/stacks-transactions";
+} from "@stacks/transactions";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
 const network = new StacksTestnet();
