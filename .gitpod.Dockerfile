@@ -11,6 +11,6 @@ RUN cd ~/tools; git clone https://github.com/lgalabru/clarity-repl.git
 RUN cd ~/tools/clarity-repl;cargo install --bin clarity-repl --path .
 
 RUN cd ~/tools; git clone https://github.com/blockstack/stacks-blockchain
-RUN cd ~/tools/stacks-blockchain/testnet/stacks-node;cargo install --bin stacks-node --path .;
+RUN cd ~/tools/stacks-blockchain;cargo build --release --bin stacks-node --path .;
 
 USER root
