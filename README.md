@@ -12,12 +12,14 @@ See also [original Clarity tutorials](https://github.com/blockstack/clarity-js-s
 - [Flexr](https://github.com/psq/flexr) Token with an elastic supply, guaranteed by design to be uncorrelated to other tokens. 
 - [Stackstarter](https://github.com/MarvinJanssen/stackstarter) Crowdfunding
 - [Marketplace](https://github.com/friedger/clarity-marketplace) Marketplace (NFTs that can get disabled + market).
+- [Loopbomb Marketplace](https://github.com/radicleart/clarity-market) Marketplace for art NFTs and others.
 - [Profit sharing token](https://github.com/friedger/clarity-profit-sharing-token) Token with included profit sharing on resale.
 - [Blind Poll](https://github.com/zexxlin/clarity-blind-poll) Anonymous polls, where all submitted answers will be sealed until they're revealed by participants after the poll is closed.
 - [Highscore](https://github.com/xmakina/clarity-high-score) Simple list of submitted scores.
 - [Redistribution](https://github.com/xmakina/redistribution-contract) Pot for redistributing funds.
 - [Endless list](https://github.com/xmakina/endless-list) A bottomless, paged, list of items.
 - [Stacks loans](https://github.com/richardmichel/stacks-loans) Loans with fixed interest rates.
+- [Advent calendar](https://github.com/friedger/clarity-advent-calendar) Open one door each day, open to everybody to add new doors.
 
 More examples on 
 * the [list of winners](https://community.blockstack.org/clarity-winners#overall) of Clarity Hackathon 1.
