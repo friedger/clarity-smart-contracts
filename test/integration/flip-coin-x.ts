@@ -1,7 +1,6 @@
 const BigNum = require("bn.js");
 import * as fs from "fs";
 import {
-  StacksTestnet,
   serializeCV,
   deserializeCV,
   BooleanCV,
@@ -10,6 +9,7 @@ import {
   OptionalCV,
   addressToString,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
 const network = new StacksTestnet();

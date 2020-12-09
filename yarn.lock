@@ -2,26 +2,42 @@
 # yarn lockfile v1
 
 
-"@blockstack/clarity-native-bin@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@blockstack/clarity-native-bin/-/clarity-native-bin-0.2.0.tgz#78d8d22637106f253d2fa688deef5fa00c947ab2"
-  integrity sha512-YZDkf44Rf02oMIrgIqALrEMB5oIKHi7kBs8nLL81ODWl8B5VOgw5kPXCFimL7V6+QUap0ZEY0aQRZ3xXu4vnJQ==
+"@blockstack/clarity-native-bin@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@blockstack/clarity-native-bin/-/clarity-native-bin-0.3.0.tgz#dfe4b8696d2b8ff1f623331cbc67ec53b0ef137c"
+  integrity sha512-X+rKBhSMLCAtEn3ILSnwhqzAVJpfWlU69H1IIGc7lsuVDQMYkHVj5rQ4OmHH5k8rwZUVplinDTNzlgjBC0x0jQ==
   dependencies:
     fs-extra "^8.0.1"
     node-fetch "^2.6.0"
     semver "^6.1.1"
     tar "^4.4.8"
 
-"@blockstack/clarity@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.2.0.tgz#fb5bc977bf92231102c76375d622d61693a71943"
-  integrity sha512-Hk+zfQ4YnfBxghcbYmVbibwbmc+uolClQVHea/vcIWQQjI8l171WW76Yng4k3jZq1rPCt5ZOgPFosAtBp3kQ4g==
+"@blockstack/clarity@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@blockstack/clarity/-/clarity-0.3.0.tgz#ba856cc343778e8469fb9e6be7caf7025eb0e3af"
+  integrity sha512-XhoCrmNSv85Fp5BgoQbO4LK6s6c9tOQEl5svcDS/G3yjXA4LcPOu/TtZm2AcGTf6leu/9SydbWcP7JIKINTyxA==
 
-"@blockstack/stacks-transactions@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@blockstack/stacks-transactions/-/stacks-transactions-0.7.0.tgz#c587f69879b1903bada87769f1d6d1217479336a"
-  integrity sha512-9IUR641PJpigYDCWdtKFgBIk0Oxyoc2M2XVdyaEOEcRhI+4lcacDhsuseAmGbkB9FhJgJcNicWPujUPNFl1XCw==
+"@stacks/common@^1.0.0-beta.19":
+  version "1.0.0-beta.19"
+  resolved "https://registry.yarnpkg.com/@stacks/common/-/common-1.0.0-beta.19.tgz#779cce0e8acaf3e55992b2b73b3c7868f10c7294"
+  integrity sha512-7KWmGB9SDmnB0HzegPCSSPq08rlThm8QheiIbSSLB38AfwJyqITHml2kkPu+kf7FsYEGrNxYSKYY9YMsdnT2lA==
   dependencies:
+    cross-fetch "^3.0.5"
+
+"@stacks/network@1.0.0-beta.19", "@stacks/network@^1.0.0-beta.19":
+  version "1.0.0-beta.19"
+  resolved "https://registry.yarnpkg.com/@stacks/network/-/network-1.0.0-beta.19.tgz#a3916adff3cb7d8f275c2d6ab6f94b9a776b2ea3"
+  integrity sha512-/J85L4gFJgwpy4Z6rWYnCIm6LRqcyqjUOKbZS7SDphpLxUj7TDgF0GJ5/WEO9ORoIGuNqzrcFlyq48nBui4nRw==
+  dependencies:
+    "@stacks/common" "^1.0.0-beta.19"
+
+"@stacks/transactions@^1.0.0-beta.19":
+  version "1.0.0-beta.19"
+  resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-1.0.0-beta.19.tgz#d2a70606e40177162ea8e3ec61248f08ed0f0ca1"
+  integrity sha512-UktdZUfTXrOZKygcNx7lLwQUB0U6Jy7Vrm1eqxy7031hNVZZgd9hS2lPd4/hLFQW2CBkCqpAI7d3q87Fz+fxuA==
+  dependencies:
+    "@stacks/common" "^1.0.0-beta.19"
+    "@stacks/network" "^1.0.0-beta.19"
     "@types/bn.js" "^4.11.6"
     "@types/elliptic" "^6.4.12"
     "@types/randombytes" "^2.0.0"
@@ -29,7 +45,7 @@
     bn.js "^4.11.9"
     c32check "^1.1.1"
     cross-fetch "^3.0.5"
-    elliptic "^6.5.2"
+    elliptic "^6.5.3"
     lodash "^4.17.20"
     randombytes "^2.1.0"
     ripemd160-min "^0.0.6"
@@ -313,7 +329,7 @@ diff@^4.0.1:
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
-elliptic@^6.5.2:
+elliptic@^6.5.3:
   version "6.5.3"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.3.tgz#cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6"
   integrity sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==
@@ -683,7 +699,7 @@ node-environment-flags@1.0.5:
     object.getownpropertydescriptors "^2.0.3"
     semver "^5.7.0"
 
-node-fetch@2.6.1:
+node-fetch@2.6.1, node-fetch@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==

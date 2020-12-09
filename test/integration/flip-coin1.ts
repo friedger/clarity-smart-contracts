@@ -3,13 +3,14 @@ import * as fs from "fs";
 import {
   FungibleConditionCode,
   makeStandardSTXPostCondition,
-  StacksTestnet,
   broadcastTransaction,
   makeContractCall,
   trueCV,
   makeContractSTXPostCondition,
   contractPrincipalCV,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
+
 import BN from "bn.js";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";

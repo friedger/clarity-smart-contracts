@@ -3,13 +3,13 @@ import {
   bufferCV,
   bufferCVFromString,
   makeContractCall,
-  StacksTestnet,
   StacksTransaction,
   tupleCV,
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
   uintCV,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
 
 const fetch = require("node-fetch");
 import * as fs from "fs";

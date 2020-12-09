@@ -114,7 +114,7 @@ yarn escrow
 
 The test script contains calls of the following methods defined in the stacks-transaction library:
 
-- `makeSmartContractDeploy`
+- `makeContractDeploy`
 - `makeContractCall`
 - `makeStandardSTXPostCondition`
 - `makeContractSTXPostCondition`

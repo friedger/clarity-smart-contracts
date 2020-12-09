@@ -1,14 +1,14 @@
 const BigNum = require("bn.js");
 import * as fs from "fs";
 import {
-  makeSmartContractDeploy,
+  makeContractDeploy,
   makeContractCall,
   FungibleConditionCode,
   standardPrincipalCV,
-  StacksTestnet,
   broadcastTransaction,
   makeStandardSTXPostCondition,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
 
@@ -27,7 +27,7 @@ describe("oi license contract test suite", async () => {
     let secretKey = keys.secretKey;
     let secretKey2 = keys2.secretKey;
 
-    let transaction = await makeSmartContractDeploy({
+    let transaction = await makeContractDeploy({
       contractName,
       codeBody,
       fee,

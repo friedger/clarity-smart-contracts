@@ -4,11 +4,11 @@
 import {
   broadcastTransaction,
   makeContractDeploy,
-  StacksTestnet,
   StacksTransaction,
   TxBroadcastResultOk,
   TxBroadcastResultRejected,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
 import * as fs from "fs";
 
 import { ADDR1, testnetKeyMap } from "./mocknet";

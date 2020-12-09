@@ -6,9 +6,9 @@ import {
   standardPrincipalCV,
   serializeCV,
   deserializeCV,
-  StacksTestnet,
   broadcastTransaction,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
 const network = new StacksTestnet();

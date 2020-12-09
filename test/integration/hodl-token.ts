@@ -1,17 +1,17 @@
 const BigNum = require("bn.js");
 import * as fs from "fs";
 import {
-  makeSmartContractDeploy,
+  makeContractDeploy,
   makeContractCall,
   FungibleConditionCode,
   standardPrincipalCV,
   uintCV,
   makeStandardFungiblePostCondition,
   makeContractFungiblePostCondition,
-  StacksTestnet,
   broadcastTransaction,
   createAssetInfo,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
 
@@ -33,7 +33,7 @@ describe("hold token test suite", async () => {
 
     let fee = new BigNum(2000);
 
-    let transaction = await makeSmartContractDeploy({
+    let transaction = await makeContractDeploy({
       contractName,
       codeBody,
       fee,

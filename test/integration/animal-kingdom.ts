@@ -1,15 +1,16 @@
 const BigNum = require("bn.js");
 import * as fs from "fs";
 import {
-  makeSmartContractDeploy,
+  makeContractDeploy,
   makeContractCall,
   FungibleConditionCode,
   standardPrincipalCV,
-  StacksTestnet,
   broadcastTransaction,
   makeStandardSTXPostCondition,
   bufferCV,
 } from "@stacks/transactions";
+
+import { StacksTestnet } from "@stacks/network";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
 
@@ -27,7 +28,7 @@ describe("animal kingdom test suite", async () => {
     let fee = new BigNum(3000);
     let senderKey = keys.secretKey;
 
-    let transaction = await makeSmartContractDeploy({
+    let transaction = await makeContractDeploy({
       contractName,
       codeBody,
       fee,

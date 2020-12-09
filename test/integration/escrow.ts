@@ -1,7 +1,7 @@
 const BigNum = require("bn.js");
 import * as fs from "fs";
 import {
-  makeSmartContractDeploy,
+  makeContractDeploy,
   makeContractCall,
   TransactionVersion,
   FungibleConditionCode,
@@ -9,9 +9,9 @@ import {
   ChainID,
   makeStandardSTXPostCondition,
   makeContractSTXPostCondition,
-  StacksTestnet,
   broadcastTransaction,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
 
 const STACKS_API_URL = "http://localhost:20443";
 
@@ -35,7 +35,7 @@ describe("escrow contract test suite", async () => {
     network.coreApiUrl = STACKS_API_URL;
 
     console.log("deploy contract");
-    var transaction = await makeSmartContractDeploy({
+    var transaction = await makeContractDeploy({
       contractName,
       codeBody,
       fee,

@@ -4,10 +4,10 @@ import {
   FungibleConditionCode,
   makeStandardSTXPostCondition,
   makeSTXTokenTransfer,
-  StacksTestnet,
   broadcastTransaction,
-  makeSmartContractDeploy,
+  makeContractDeploy,
 } from "@stacks/transactions";
+import { StacksTestnet } from "@stacks/network";
 
 const STACKS_API_URL = "http://127.0.0.1:20443";
 const network = new StacksTestnet();
@@ -26,7 +26,7 @@ describe("flip coin test suite", async () => {
       .readFileSync(`./contracts/experiments/${contractName}.clar`)
       .toString();
 
-    const transaction = await makeSmartContractDeploy({
+    const transaction = await makeContractDeploy({
       contractName,
       codeBody,
       fee: new BigNum(5998),
