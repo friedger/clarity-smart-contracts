@@ -106,7 +106,7 @@ describe("RocketFactoryClient Test Suite", () => {
     let receipt: Receipt;
 
     before(async () => {
-      receipt = await rocketFactoryClient.orderRocket(1, { sender: alice });
+      receipt = await rocketFactoryClient.orderRocket(21, { sender: alice });
     });
 
     it("should return an invalid receipt", async () => {

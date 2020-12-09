@@ -46,6 +46,11 @@
   )
 )
 
+(define-public (buy (amount uint))
+  (begin
+    (stx-burn? amount tx-sender)
+    (ft-mint? rocket-token amount tx-sender)))
+
 ;; Initialize the contract
 (begin
   (ft-mint? rocket-token u20 'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7) ;; alice

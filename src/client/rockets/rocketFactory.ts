@@ -60,7 +60,7 @@ export class RocketFactoryClient extends Client {
   async mineBlock(sender: string): Promise<Receipt> {
     const tx = this.createTransaction({
       method: {
-        name: "mine-block",
+        name: "invalid-function-name",
         args: [],
       },
     });
