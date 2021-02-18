@@ -1,5 +1,5 @@
-(define-map store ((key principal))
-  ((v1 int)
+(define-map store (tuple (key principal))
+  (tuple (v1 int)
    (v2 int))
 )
 

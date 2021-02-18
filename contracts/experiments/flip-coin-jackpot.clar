@@ -8,8 +8,8 @@
 (define-constant err-flip-failed u11)
 
 ;; storage
-(define-map gamblers ((height uint) (value bool)) ((principal principal) (amount uint)))
-(define-map amounts ((height uint)) ((amount uint)))
+(define-map gamblers (tuple (height uint) (value bool)) (tuple (principal principal) (amount uint)))
+(define-map amounts (tuple (height uint)) (tuple (amount uint)))
 
 (define-data-var pending-payout (optional uint) none)
 (define-data-var jackpot uint u0)
@@ -30,7 +30,7 @@
 
 ;; returns how much stx were bet at the given block
 (define-read-only (get-amount-at (height uint))
-  (match (map-get? amounts ((height height)))
+  (match (map-get? amounts {height: height})
     amount (get amount amount)
     u0
   )
@@ -39,7 +39,7 @@
 ;; returns the winner at the given block. If there was no winner `(none)` is returned
 (define-read-only (get-optional-winner-at (height uint))
   (let ((value (contract-call? .flip-coin flip-coin-at (+ height u1))))
-    (match (map-get? gamblers ((height height) (value value)))
+    (match (map-get? gamblers {height: height, value: value})
       gambler (some (get principal gambler))
       none
     )
@@ -67,7 +67,7 @@
 
 (define-private (update-game-after-payment (value bool) (amount uint))
   (begin
-    (map-set amounts ((height block-height))  ((amount (+ (get-amount-at block-height) amount))))
+    (map-set amounts {height: block-height}  {amount: (+ (get-amount-at block-height) amount)})
     (var-set pending-payout (some block-height))
     (ok block-height)
   )
@@ -80,7 +80,7 @@
   (let ((amount default-amount))
     (begin
       (payout (var-get pending-payout))
-      (if (map-insert gamblers ((height block-height) (value value)) ((amount amount) (principal tx-sender)))
+      (if (map-insert gamblers {height: block-height, value: value} {amount: amount, principal: tx-sender})
         (match (stx-transfer? amount tx-sender (as-contract tx-sender))
           success (update-game-after-payment value amount)
           error (err error)

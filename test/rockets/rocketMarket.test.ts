@@ -42,13 +42,13 @@ describe("RocketMarketClient Test Suite", () => {
     expect(res.success, res.error).to.be.true;
   });
 
-  describe("Fly wiht pilot tests", () => {
+  describe("Fly with pilot tests", () => {
     it("should fly", async () => {
       res = await rocketMarketClient.flyShip(2, { sender: alice });
       expect(res.success, res.error).to.be.true;
     });
 
-    it("should authorize bob ", async () => {
+    it("should authorize Bob ", async () => {
       res = await rocketMarketClient.authorizePilot(2, bob, { sender: alice });
       expect(res.success, res.error).to.be.true;
     });

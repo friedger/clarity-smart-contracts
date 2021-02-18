@@ -8,9 +8,9 @@
 (define-constant err-flip-failed u11)
 
 ;; storage
-(define-map gamblers ((height uint)) ((bet-true principal) (bet-false principal)))
-(define-map amounts ((height uint)) ((amount uint)))
-(define-map matched-bets ((created-at uint)) ((height uint)))
+(define-map gamblers (tuple (height uint)) (tuple (bet-true principal) (bet-false principal)))
+(define-map amounts (tuple (height uint)) (tuple (amount uint)))
+(define-map matched-bets (tuple (created-at uint)) (tuple (height uint)))
 
 (define-data-var pending-payout (optional uint) none)
 (define-data-var next-slot {bet-true: (optional principal), bet-false: (optional principal),
@@ -27,7 +27,7 @@
 
 ;; returns how much stx were bet at the given block
 (define-read-only (get-amount-at (height uint))
-  (match (map-get? amounts ((height height)))
+  (match (map-get? amounts {height: height})
     amount (get amount amount)
     u0
   )
@@ -35,7 +35,7 @@
 
 ;; returns the winner at the given block. If there was no winner `(none)` is returned
 (define-read-only (get-optional-winner-at (height uint))
-  (match (map-get? gamblers ((height height)))
+  (match (map-get? gamblers {height: height})
     game-slot  (let ((value (contract-call? .flip-coin flip-coin-at (+ height u1))))
                   (if value
                     (some (get bet-true game-slot))
@@ -44,6 +44,7 @@
     none
   )
 )
+
 
 ;; splits the prize money
 ;; 10% goes to another account
@@ -84,58 +85,42 @@
   (ok {created-at: (unwrap-panic (var-get trigger)), bet-at: u0})
 )
 
-(define-private (update-game-after-payment (value bool) (amount uint))
-  (match (next-gambler (not value))
-    opponent (if (map-insert gamblers ((height block-height))
+(define-private (update-game-after-payment (values (tuple (bet-true principal) (bet-false principal))) (amount uint))
+  (if (map-insert gamblers {height: block-height}
                     {
-                      bet-true: (if value tx-sender opponent),
-                      bet-false: (if value opponent tx-sender)
-                    }
-                  )
-                  (if (map-insert amounts ((height block-height))  ((amount (+ amount amount))))
-                    (let ((created-at (get created-at (var-get next-slot))))
-                      (begin
-                        (map-insert matched-bets {created-at: created-at} {height: block-height})
-                        (var-set next-slot new-slot)
-                        (var-set pending-payout (some block-height))
-                        (ok {
-                              created-at: created-at,
-                              bet-at: block-height
-                            })
-                      )
-                    )
-                    (panic)
-                  )
-                (panic)
-              )
-    (begin
-      (var-set next-slot {
-        bet-true: (if value (some tx-sender) none),
-        bet-false: (if value none (some tx-sender)),
-        created-at: block-height,
-        amount: amount
-        })
-      (ok {created-at: block-height, bet-at: u0})
-    )
-  )
-)
+                      bet-true: (get bet-true values),
+                      bet-false: (get bet-false values)
+                    })
+      (if (map-insert amounts {height: block-height}  {amount: (+ amount amount)})
+          (let ((created-at block-height))
+            (begin
+              (map-insert matched-bets {created-at: created-at} {height: block-height})
+              (var-set next-slot new-slot)
+              (var-set pending-payout (some block-height))
+              (ok {
+                    created-at: created-at,
+                    bet-at: block-height
+                  })
+            )
+          )
+          (panic))
+      (panic)))
 
-;; bet 1000 mSTX on the given value. Only one user can bet on that value for each block.
+;; bet 1000 mSTX on the each value for the given users.
+;; Only one set of users can bet for each block.
 ;; if payout needs to be done then this function call will do it (note that the caller
 ;; needs to provide corresponding post conditions)
-(define-public (bet (value bool))
+(define-public (bet (values (tuple (bet-true principal) (bet-false principal))))
   (let ((amount default-amount))
     (begin
       (payout (var-get pending-payout))
-      (if (is-some (next-gambler value))
+      (if (is-some (next-gambler true))
         (err err-bet-exists)
         (begin
-          (match (stx-transfer? amount tx-sender (as-contract tx-sender))
-            success (update-game-after-payment value amount)
-            error (err error)
-          )
-        )
-      )
-    )
-  )
+          (match (stx-transfer? (* u2 amount) tx-sender (as-contract tx-sender))
+            success (update-game-after-payment values amount)
+            error (err error)))))))
+
+(define-public (fund-slot (amount uint) (account principal))
+  (stx-transfer? amount tx-sender account)
 )

@@ -4,5 +4,5 @@
 ;; For more details see docs/flip-coin.md
 
 (define-read-only (flip-coin-delegate)
- (contract-call? .flip-coin even "B")
+ (contract-call? .flip-coin even 0x0b)
 )
