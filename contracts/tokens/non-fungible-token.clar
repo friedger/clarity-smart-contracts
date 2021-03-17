@@ -58,7 +58,7 @@
 ;; To be optimized
 (define-private (can-transfer (actor principal) (token-id uint))
   (or
-   (is-owner (print actor) token-id)
+   (is-owner actor token-id)
    (is-spender-approved actor token-id)
    (is-operator-approved (unwrap! (nft-get-owner? non-fungible-token token-id) false) actor)))
 
@@ -88,7 +88,9 @@
       (map-set tokens-count
         new-owner
         (+ current-balance-new-owner u1))
-      true)))
+      (match (nft-transfer? non-fungible-token token-id owner new-owner)
+        success (ok success)
+        error (err {kind: "nft-transfer-failed", code: error})))))
 
 ;; Public functions
 
@@ -129,9 +131,7 @@
         (can-transfer tx-sender token-id)
         (is-owner owner token-id)
         (not (is-eq recipient owner)))
-       (match (nft-transfer? non-fungible-token token-id owner recipient)
-        success (ok success)
-        error (err {kind: "nft-transfer-failed", code: error}))
+      (transfer-token token-id owner recipient)
       unauthorized-transfer-err))
 
 ;; Transfers tokens to a specified principal.
@@ -144,7 +144,7 @@
 
 ;; Gets the owner of the specified token ID.
 (define-read-only (get-last-token-id)
-  (ok u6))
+  (ok u7))
 
 (define-read-only (get-token-uri (token-id uint))
   (ok (some "ipfs://ipfs/QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz"))
@@ -163,4 +163,5 @@
   (try! (mint 'STSJHY3X84C0KV5NDB12FR07ETP5XXG51B8XAWSK u3))
   (try! (mint 'ST3NXKW88FR71AGTRA8H3F69HAJTTR470JJRWJ8S5 u4))
   (try! (mint 'ST3FA62NRKY41QZEXB787Y53XVSRV7N3TJ1NVDSMJ u5))
-  (try! (mint 'ST1JSH2FPE8BWNTP228YZ1AZZ0HE0064PS54Q30F0 u6)))
+  (try! (mint 'ST1JSH2FPE8BWNTP228YZ1AZZ0HE0064PS54Q30F0 u6))
+  (try! (mint 'ST343J7DNE122AVCSC4HEK4MF871PW470ZV04CFXH u7)))
