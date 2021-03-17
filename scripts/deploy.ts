@@ -12,6 +12,7 @@ import { StacksTestnet } from "@stacks/network";
 import * as fs from "fs";
 
 import { ADDR1, testnetKeyMap } from "./mocknet";
+import BN from "bn.js";
 const fetch = require("node-fetch");
 
 export const local = false;
@@ -20,10 +21,10 @@ export const noSidecar = false;
 
 const STACKS_CORE_API_URL = local
   ? "http://localhost:3999"
-  : "http://testnet-master.blockstack.org:20443";
+  : "https://stacks-node-api.testnet.stacks.co";
 const STACKS_API_URL = local
   ? "http://localhost:3999"
-  : "https://stacks-node-api.blockstack.org";
+  : "https://stacks-node-api.testnet.stacks.co";
 export const network = new StacksTestnet();
 network.coreApiUrl = STACKS_CORE_API_URL;
 
@@ -42,10 +43,10 @@ const keys = mocknet
       fs
         .readFileSync("../../blockstack/stacks-blockchain/keychain.json")
         .toString()
-    ).paymentKeyInfo;
+    );
 
-export const secretKey = mocknet ? keys.secretKey : keys.privateKey;
-export const contractAddress = mocknet ? keys.address : keys.address.STACKS;
+export const secretKey = mocknet ? keys.secretKey : keys.private;
+export const contractAddress = mocknet ? keys.address : keys.stacks;
 
 //
 export async function handleTransaction(transaction: StacksTransaction) {
