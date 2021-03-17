@@ -16,37 +16,33 @@
 ;;  along with Blockstack. If not, see <http://www.gnu.org/licenses/>.
 
 ;; Non Fungible Token, modeled after ERC-721
-(define-non-fungible-token non-fungible-token int)
+(define-non-fungible-token non-fungible-token uint)
 
 ;; Storage
 (define-map tokens-spender
-  ((token-id int))
-  ((spender principal)))
+  uint
+  principal)
 (define-map tokens-count
-  ((owner principal))
-  ((count int)))
+  principal
+  uint)
 (define-map accounts-operator
-  ((operator principal) (account principal))
-  ((is-approved bool)))
+  (tuple (operator principal) (account principal))
+  (tuple (is-approved bool)))
 
 ;; Internals
 
 ;; Gets the amount of tokens owned by the specified address.
 (define-private (balance-of (account principal))
-  (default-to 0
-    (get count
-         (map-get? tokens-count ((owner account))))))
+  (default-to u0 (map-get? tokens-count account)))
 
 ;; Gets the owner of the specified token ID.
-(define-private (owner-of? (token-id int))
-  (nft-get-owner? non-fungible-token token-id)
-)
+(define-public (get-owner (token-id uint))
+  (ok (nft-get-owner? non-fungible-token token-id)))
 
 ;; Gets the approved address for a token ID, or zero if no address set (approved method in ERC721)
-(define-private (is-spender-approved (spender principal) (token-id int))
+(define-private (is-spender-approved (spender principal) (token-id uint))
   (let ((approved-spender
-         (unwrap! (get spender
-                        (map-get? tokens-spender ((token-id token-id))))
+         (unwrap! (map-get? tokens-spender token-id)
                    false))) ;; return false if no specified spender
     (is-eq spender approved-spender)))
 
@@ -54,63 +50,70 @@
 (define-private (is-operator-approved (account principal) (operator principal))
   (default-to false
     (get is-approved
-         (map-get? accounts-operator ((operator operator) (account account))))))
+         (map-get? accounts-operator {operator: operator, account: account}))))
 
-(define-private (is-owner (actor principal) (token-id int))
+(define-private (is-owner (actor principal) (token-id uint))
   (is-eq actor
        ;; if no owner, return false
-       (unwrap! (owner-of? token-id) false)))
+       (unwrap! (nft-get-owner? non-fungible-token token-id) false)))
 
 ;; Returns whether the given actor can transfer a given token ID.
 ;; To be optimized
-(define-private (can-transfer (actor principal) (token-id int))
+(define-private (can-transfer (actor principal) (token-id uint))
   (or
    (is-owner actor token-id)
    (is-spender-approved actor token-id)
-   (is-operator-approved (unwrap! (owner-of? token-id) false) actor)))
+   (is-operator-approved (unwrap! (nft-get-owner? non-fungible-token token-id) false) actor)))
 
 ;; Internal - Register token
-(define-private (register-token (new-owner principal) (token-id int))
+(define-private (mint-token (token-id uint) (new-owner principal))
   (let ((current-balance (balance-of new-owner)))
-    (begin
-      (nft-mint? non-fungible-token token-id new-owner)
-      (map-set tokens-count
-        ((owner new-owner))
-        ((count (+ 1 current-balance))))
-      true)))
+      (match (nft-mint? non-fungible-token token-id new-owner)
+        success
+          (begin
+            (map-set tokens-count
+              new-owner
+              (+ u1 current-balance))
+            true)
+        error false)))
 
 ;; Internal - Release token
-(define-private (release-token (owner principal) (token-id int))
-  (let ((current-balance (balance-of owner)))
+(define-private (transfer-token (token-id uint) (owner principal) (new-owner principal))
+  (let
+    ((current-balance-owner (balance-of owner))
+      (current-balance-new-owner (balance-of new-owner)))
     (begin
       (map-delete tokens-spender
-        ((token-id token-id)))
+        token-id)
       (map-set tokens-count
-        ((owner owner))
-        ((count (- current-balance 1))))
+        owner
+        (- current-balance-owner u1))
+      (map-set tokens-count
+        new-owner
+        (+ current-balance-new-owner u1))
       true)))
 
 ;; Public functions
 
-(define-constant same-spender-err (err 1))
-(define-constant not-approved-spender-err (err 2))
-(define-constant failed-to-move-token-err (err 3))
-(define-constant unauthorized-transfer-err (err 4))
-(define-constant failed-to-mint-err (err 5))
+(define-constant same-spender-err (err u1))
+(define-constant not-approved-spender-err (err u2))
+(define-constant failed-to-move-token-err (err u3))
+(define-constant unauthorized-transfer-err (err u4))
+(define-constant failed-to-mint-err (err u5))
 
 ;; Approves another address to transfer the given token ID (approve method in ERC721)
 ;; To be optimized
-(define-public (set-spender-approval (spender principal) (token-id int))
+(define-public (set-spender-approval (spender principal) (token-id uint))
   (if (is-eq spender tx-sender)
       same-spender-err
       (if (or (is-owner tx-sender token-id)
               (is-operator-approved
-               (unwrap! (owner-of? token-id) not-approved-spender-err)
+               (unwrap! (nft-get-owner? non-fungible-token token-id) not-approved-spender-err)
                tx-sender))
           (begin
             (map-set tokens-spender
-                        ((token-id token-id))
-                        ((spender spender)))
+                        token-id
+                        spender)
             (ok token-id))
           not-approved-spender-err)))
 
@@ -120,35 +123,33 @@
       same-spender-err
       (begin
         (map-set accounts-operator
-                    ((operator operator) (account tx-sender))
-                    ((is-approved is-approved)))
+                    {operator: operator, account: tx-sender}
+                    {is-approved: is-approved})
         (ok true))))
 
 ;; Transfers the ownership of a given token ID to another address.
-(define-public (transfer-from (owner principal) (recipient principal) (token-id int))
+(define-public (transfer-from (token-id uint) (owner principal) (recipient principal))
   (if (and
         (can-transfer tx-sender token-id)
         (is-owner owner token-id)
         (not (is-eq recipient owner)))
-      (if
-       (and (release-token owner token-id)
-            (register-token recipient token-id))
-       (ok token-id)
-       failed-to-move-token-err)
-      unauthorized-transfer-err))
+       (match (nft-transfer? non-fungible-token token-id owner recipient)
+        success (ok token-id)
+        error (err failed-to-move-token-err))
+      (err unauthorized-transfer-err)))
 
 ;; Transfers tokens to a specified principal.
-(define-public (transfer (recipient principal) (token-id int))
-  (transfer-from tx-sender recipient token-id))
+(define-public (transfer (token-id uint) (sender principal) (recipient principal))
+    (transfer-from token-id tx-sender recipient))
 
 ;; Mint new tokens.
-(define-private (mint (owner principal) (token-id int))
-  (if (register-token owner token-id)
+(define-private (mint (owner principal) (token-id uint))
+  (if (mint-token token-id owner)
       (ok token-id)
-      failed-to-mint-err))
+      (err failed-to-mint-err)))
 
 ;; Initialize the contract
 (begin
-  (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M 10001)
-  (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M 10002)
-  (mint 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9 10003))
+  (try! (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M u1))
+  (try! (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M u2))
+  (try! (mint 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9 u3)))
