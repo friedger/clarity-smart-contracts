@@ -15,6 +15,7 @@
 ;;  You should have received a copy of the GNU General Public License
 ;;  along with Blockstack. If not, see <http://www.gnu.org/licenses/>.
 
+(impl-trait 'ST1JSH2FPE8BWNTP228YZ1AZZ0HE0064PS54Q30F0.nft-trait.nft-trait)
 ;; Non Fungible Token, modeled after ERC-721
 (define-non-fungible-token non-fungible-token uint)
 
@@ -34,10 +35,6 @@
 ;; Gets the amount of tokens owned by the specified address.
 (define-private (balance-of (account principal))
   (default-to u0 (map-get? tokens-count account)))
-
-;; Gets the owner of the specified token ID.
-(define-public (get-owner (token-id uint))
-  (ok (nft-get-owner? non-fungible-token token-id)))
 
 ;; Gets the approved address for a token ID, or zero if no address set (approved method in ERC721)
 (define-private (is-spender-approved (spender principal) (token-id uint))
@@ -61,7 +58,7 @@
 ;; To be optimized
 (define-private (can-transfer (actor principal) (token-id uint))
   (or
-   (is-owner actor token-id)
+   (is-owner (print actor) token-id)
    (is-spender-approved actor token-id)
    (is-operator-approved (unwrap! (nft-get-owner? non-fungible-token token-id) false) actor)))
 
@@ -95,11 +92,10 @@
 
 ;; Public functions
 
-(define-constant same-spender-err (err u1))
-(define-constant not-approved-spender-err (err u2))
-(define-constant failed-to-move-token-err (err u3))
-(define-constant unauthorized-transfer-err (err u4))
-(define-constant failed-to-mint-err (err u5))
+(define-constant same-spender-err (err {kind: "invalid-call", code: u1}))
+(define-constant not-approved-spender-err (err {kind: "permission-denied", code: u2}))
+(define-constant unauthorized-transfer-err (err {kind: "permission-denied", code: u3}))
+(define-constant failed-to-mint-err (err {kind: "nft-mint-failed", code: u4}))
 
 ;; Approves another address to transfer the given token ID (approve method in ERC721)
 ;; To be optimized
@@ -134,22 +130,37 @@
         (is-owner owner token-id)
         (not (is-eq recipient owner)))
        (match (nft-transfer? non-fungible-token token-id owner recipient)
-        success (ok token-id)
-        error (err failed-to-move-token-err))
-      (err unauthorized-transfer-err)))
+        success (ok success)
+        error (err {kind: "nft-transfer-failed", code: error}))
+      unauthorized-transfer-err))
 
 ;; Transfers tokens to a specified principal.
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
     (transfer-from token-id tx-sender recipient))
 
+;; Gets the owner of the specified token ID.
+(define-read-only (get-owner (token-id uint))
+  (ok (nft-get-owner? non-fungible-token token-id)))
+
+;; Gets the owner of the specified token ID.
+(define-read-only (get-last-token-id)
+  (ok u6))
+
+(define-read-only (get-token-uri (token-id uint))
+  (ok (some "ipfs://ipfs/QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz"))
+)
+
 ;; Mint new tokens.
 (define-private (mint (owner principal) (token-id uint))
   (if (mint-token token-id owner)
       (ok token-id)
-      (err failed-to-mint-err)))
+      failed-to-mint-err))
 
 ;; Initialize the contract
 (begin
-  (try! (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M u1))
-  (try! (mint 'ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M u2))
-  (try! (mint 'ST1JDEC841ZDWN9CKXKJMDQGP5TW1AM10B7EV0DV9 u3)))
+  (try! (mint 'STZMTMQW4HRVCSAK0ZVG16TDVPV9WRG4WSNFP51F u1))
+  (try! (mint 'ST2PBEZB3ZPHJE1XJHFQKGF6E08SV29K96WCRJA13 u2))
+  (try! (mint 'STSJHY3X84C0KV5NDB12FR07ETP5XXG51B8XAWSK u3))
+  (try! (mint 'ST3NXKW88FR71AGTRA8H3F69HAJTTR470JJRWJ8S5 u4))
+  (try! (mint 'ST3FA62NRKY41QZEXB787Y53XVSRV7N3TJ1NVDSMJ u5))
+  (try! (mint 'ST1JSH2FPE8BWNTP228YZ1AZZ0HE0064PS54Q30F0 u6)))
