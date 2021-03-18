@@ -1,4 +1,4 @@
-(impl-trait 'SP1JSH2FPE8BWNTP228YZ1AZZ0HE0064PS6RXRAY4.nft-trait.nft-trait)
+(impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
 
 (define-non-fungible-token friedger-pool uint)
 
@@ -28,10 +28,11 @@
   (ok (some "https://pool.friedger.de/nft.json")))
 
 (define-read-only (get-meta (id uint))
-  (ok {name: "Friedger Pool Early Member", uri: "https://pool.friedger.de/nft.png", mime-type: "image/png"}))
+  (ok {name: "Friedger Pool Early Member", uri: "https://pool.friedger.de/nft.webp", mime-type: "image/webp",
+        hash: "b502961ef5e1762fa76263a8353bd976c291bd61cf8b7d4514fcf2787db76ac0"}))
 
 (define-read-only (get-nft-meta)
-  (ok {name: "Friedger Pool", uri: "https://pool.friedger.de/nft.png", mime-type: "image/png"}))
+  (ok {name: "Friedger Pool", uri: "https://pool.friedger.de/nft.webp", mime-type: "image/webp"}))
 
 ;; Gets the owner of the 'SPecified token ID.
 (define-read-only (get-owner (token-id uint))
@@ -42,9 +43,8 @@
   (if (and (is-owner token-id sender) (is-eq sender tx-sender))
     (match (nft-transfer? friedger-pool token-id sender recipient)
       success (ok success)
-      error (err {kind: "nft-transfer-failed", code: error})
-    )
-    (err {kind: "permission-denied", code: err-permission-denied})))
+      error (nft-transfer-err error))
+    nft-not-owned-err))
 
 ;; Claim pre-minted tokens.
 (define-public (claim (amount-in-stx uint))
@@ -59,8 +59,40 @@
           true)
         (match (nft-mint? friedger-pool token-id tx-sender)
           success (ok success)
-          error (err {kind: "nft-mint-failed", code: error})))
-      (err {kind: "permission-denied", code: err-permission-denied}))))
+          error (nft-mint-err error)))
+      nft-not-owned-err)))
+
+;; error handling
+(define-constant nft-not-owned-err (err u401)) ;; unauthorized
+(define-constant nft-not-found-err (err u404)) ;; not found
+(define-constant sender-equals-recipient-err (err u405)) ;; method not allowed
+(define-constant nft-exists-err (err u409)) ;; conflict
+
+(define-private (nft-transfer-err (code uint))
+  (if (is-eq u1 code)
+    nft-not-owned-err
+    (if (is-eq u2 code)
+      sender-equals-recipient-err
+      (if (is-eq u3 code)
+        nft-not-found-err
+        (err code)))))
+
+(define-private (nft-mint-err (code uint))
+  (if (is-eq u1 code)
+    nft-exists-err
+    (err code)))
+
+(define-read-only (get-errstr (code uint))
+  (ok
+    (if (is-eq u401 code)
+      "nft-not-owned"
+      (if (is-eq u404 code)
+        "nft-not-found"
+        (if (is-eq u405 code)
+          "sender-equals-recipient"
+          (if (is-eq u409 code)
+            "nft-exists"
+            "unknown-error"))))))
 
 ;; list of members
 (define-constant initial-members (list

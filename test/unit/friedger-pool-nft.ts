@@ -19,7 +19,7 @@ describe("oi license contract test suite", () => {
       provider
     );
     await new Client(
-      "SP1JSH2FPE8BWNTP228YZ1AZZ0HE0064PS6RXRAY4.nft-trait",
+      "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait",
       "../contracts/sips/nft-trait.clar",
       provider
     ).deployContract();

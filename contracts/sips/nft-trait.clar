@@ -10,6 +10,6 @@
     (get-owner (uint) (response (optional principal) uint))
 
     ;; Transfer from the sender to a new principal
-    (transfer (uint principal principal) (response bool (tuple (kind (string-ascii 32)) (code uint))))
+    (transfer (uint principal principal) (response bool uint))
   )
 )
