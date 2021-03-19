@@ -150,8 +150,12 @@
 (define-constant nft-not-found-err (err u404)) ;; not found
 (define-constant sender-equals-recipient-err (err u405)) ;; method not allowed
 (define-constant nft-exists-err (err u409)) ;; conflict
-(define-constant unauthorized-transfer-err (err {kind: "permission-denied", code: u3}))
 
+(define-map err-strings (response uint uint) (string-ascii 32))
+(map-insert err-strings nft-not-owned-err "nft-not-owned")
+(map-insert err-strings not-approved-spender-err "not-approaved-spender")
+(map-insert err-strings nft-not-found-err "nft-not-found")
+(map-insert err-strings nft-exists-err "nft-exists")
 
 (define-private (nft-transfer-err (code uint))
   (if (is-eq u1 code)
@@ -168,16 +172,7 @@
     (err code)))
 
 (define-read-only (get-errstr (code uint))
-  (ok
-    (if (is-eq u401 code)
-      "nft-not-owned"
-      (if (is-eq u404 code)
-        "nft-not-found"
-        (if (is-eq u405 code)
-          "sender-equals-recipient"
-          (if (is-eq u409 code)
-            "nft-exists"
-            "unknown-error"))))))
+  (unwrap! (map-get? err-strings (err code)) "unknown-error"))
 
 ;; Initialize the contract
 (begin

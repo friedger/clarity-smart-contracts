@@ -7,7 +7,7 @@ import {
   unwrapResult,
 } from "@blockstack/clarity";
 
-import { assert } from "chai";
+import { assert, expect } from "chai";
 import { providerWithInitialAllocations } from "./providerWithInitialAllocations";
 
 class HodlTokenClient extends Client {
@@ -19,9 +19,9 @@ class HodlTokenClient extends Client {
     );
   }
 
-  async tokenName(): Promise<Receipt> {
+  async getName(): Promise<Receipt> {
     const tx = this.createQuery({
-      method: { name: "name", args: [] },
+      method: { name: "get-name", args: [] },
     });
     return await this.submitQuery(tx);
   }
@@ -53,6 +53,11 @@ describe("hodle token contract test suite", () => {
     before(async () => {
       provider = await ProviderRegistry.createProvider();
       tokenClient = new HodlTokenClient(provider);
+      (await new Client(
+        "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-10-ft-standard",
+        "../contracts/sips/ft-trait.clar",
+        provider
+      ).deployContract());
     });
     it("should have valid syntax", async () => {
       await tokenClient.checkContract();
@@ -71,21 +76,22 @@ describe("hodle token contract test suite", () => {
       );
       provider = await ProviderRegistry.createProvider();
       tokenClient = new HodlTokenClient(provider);
+      (await new Client(
+        "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-10-ft-standard",
+        "../contracts/sips/ft-trait.clar",
+        provider
+      ).deployContract());
       await tokenClient.deployContract();
     });
 
     it("should return name", async () => {
-      assert.equal(
-        `(ok 0x${Buffer.from("Hodl").toString("hex")})`,
-        unwrapResult(await tokenClient.tokenName())
-      );
+      assert.equal(`(ok "Hodl")`, unwrapResult(await tokenClient.getName()));
     });
 
     it("should buy hodl tokens", async () => {
-      const result = await tokenClient.buyTokens(10, { sender: alice });
-      assert.equal(
-        'Transaction executed and committed. Returned: u10\n[STXEvent(STXTransferEvent(STXTransferEventData { sender: Standard(StandardPrincipalData(26, [210, 137, 135, 159, 210, 247, 227, 61, 194, 243, 163, 67, 70, 194, 6, 243, 93, 231, 54, 150])), recipient: Standard(StandardPrincipalData(26, [68, 239, 37, 48, 201, 61, 59, 1, 150, 19, 31, 195, 101, 214, 229, 196, 200, 111, 28, 153])), amount: 10 })), FTEvent(FTMintEvent(FTMintEventData { asset_identifier: AssetIdentifier { contract_identifier: QualifiedContractIdentifier { issuer: StandardPrincipalData(26, [210, 137, 135, 159, 210, 247, 227, 61, 194, 243, 163, 67, 70, 194, 6, 243, 93, 231, 54, 150]), name: ContractName("hodl-token") }, asset_name: ClarityName("spendable-token") }, recipient: Standard(StandardPrincipalData(26, [210, 137, 135, 159, 210, 247, 227, 61, 194, 243, 163, 67, 70, 194, 6, 243, 93, 231, 54, 150])), amount: 10 })), FTEvent(FTMintEvent(FTMintEventData { asset_identifier: AssetIdentifier { contract_identifier: QualifiedContractIdentifier { issuer: StandardPrincipalData(26, [210, 137, 135, 159, 210, 247, 227, 61, 194, 243, 163, 67, 70, 194, 6, 243, 93, 231, 54, 150]), name: ContractName("hodl-token") }, asset_name: ClarityName("hodl-token") }, recipient: Contract(QualifiedContractIdentifier { issuer: StandardPrincipalData(26, [210, 137, 135, 159, 210, 247, 227, 61, 194, 243, 163, 67, 70, 194, 6, 243, 93, 231, 54, 150]), name: ContractName("hodl-token") }), amount: 10 }))]',
-        result.result
+      const receipt = await tokenClient.buyTokens(10, { sender: alice });
+      expect(receipt.result).equal(
+        'Transaction executed and committed. Returned: u10\n[STXEvent(STXTransferEvent(STXTransferEventData { sender: Standard(StandardPrincipalData(ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)), recipient: Standard(StandardPrincipalData(ST12EY99GS4YKP0CP2CFW6SEPWQ2CGVRWK5GHKDRV)), amount: 10 })), FTEvent(FTMintEvent(FTMintEventData { asset_identifier: AssetIdentifier { contract_identifier: QualifiedContractIdentifier { issuer: StandardPrincipalData(ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M), name: ContractName("hodl-token") }, asset_name: ClarityName("spendable-token") }, recipient: Standard(StandardPrincipalData(ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M)), amount: 10 })), FTEvent(FTMintEvent(FTMintEventData { asset_identifier: AssetIdentifier { contract_identifier: QualifiedContractIdentifier { issuer: StandardPrincipalData(ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M), name: ContractName("hodl-token") }, asset_name: ClarityName("hodl-token") }, recipient: Contract(QualifiedContractIdentifier { issuer: StandardPrincipalData(ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M), name: ContractName("hodl-token") }), amount: 10 }))]'
       );
       const result1 = await provider.eval(
         "ST398K1WZTBVY6FE2YEHM6HP20VSNVSSPJTW0D53M.hodl-token",
