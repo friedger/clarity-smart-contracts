@@ -63,7 +63,7 @@
    (is-operator-approved (unwrap! (nft-get-owner? non-fungible-token token-id) false) actor)))
 
 ;; Internal - Register token
-(define-private (mint-token (token-id uint) (new-owner principal))
+(define-private (mint (new-owner principal) (token-id uint))
   (let ((current-balance (balance-of new-owner)))
       (match (nft-mint? non-fungible-token token-id new-owner)
         success
@@ -71,10 +71,10 @@
             (map-set tokens-count
               new-owner
               (+ u1 current-balance))
-            true)
-        error false)))
+            (ok success))
+        error (nft-mint-err error))))
 
-;; Internal - Release token
+;; Internal - Tranfer token
 (define-private (transfer-token (token-id uint) (owner principal) (new-owner principal))
   (let
     ((current-balance-owner (balance-of owner))
@@ -90,23 +90,18 @@
         (+ current-balance-new-owner u1))
       (match (nft-transfer? non-fungible-token token-id owner new-owner)
         success (ok success)
-        error (err {kind: "nft-transfer-failed", code: error})))))
+        error (nft-transfer-err error)))))
 
 ;; Public functions
-
-(define-constant same-spender-err (err {kind: "invalid-call", code: u1}))
-(define-constant not-approved-spender-err (err {kind: "permission-denied", code: u2}))
-(define-constant unauthorized-transfer-err (err {kind: "permission-denied", code: u3}))
-(define-constant failed-to-mint-err (err {kind: "nft-mint-failed", code: u4}))
 
 ;; Approves another address to transfer the given token ID (approve method in ERC721)
 ;; To be optimized
 (define-public (set-spender-approval (spender principal) (token-id uint))
   (if (is-eq spender tx-sender)
-      same-spender-err
+      sender-equals-recipient-err
       (if (or (is-owner tx-sender token-id)
               (is-operator-approved
-               (unwrap! (nft-get-owner? non-fungible-token token-id) not-approved-spender-err)
+               (unwrap! (nft-get-owner? non-fungible-token token-id) nft-not-found-err)
                tx-sender))
           (begin
             (map-set tokens-spender
@@ -118,7 +113,7 @@
 ;; Sets or unsets the approval of a given operator (setApprovalForAll method in ERC721)
 (define-public (set-operator-approval (operator principal) (is-approved bool))
   (if (is-eq operator tx-sender)
-      same-spender-err
+      sender-equals-recipient-err
       (begin
         (map-set accounts-operator
                     {operator: operator, account: tx-sender}
@@ -127,12 +122,11 @@
 
 ;; Transfers the ownership of a given token ID to another address.
 (define-public (transfer-from (token-id uint) (owner principal) (recipient principal))
-  (if (and
-        (can-transfer tx-sender token-id)
-        (is-owner owner token-id)
-        (not (is-eq recipient owner)))
-      (transfer-token token-id owner recipient)
-      unauthorized-transfer-err))
+  (begin
+    (asserts! (can-transfer tx-sender token-id) not-approved-spender-err)
+    (asserts! (is-owner owner token-id) nft-not-owned-err)
+    (asserts! (not (is-eq recipient owner)) sender-equals-recipient-err)
+    (transfer-token token-id owner recipient)))
 
 ;; Transfers tokens to a specified principal.
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
@@ -150,11 +144,40 @@
   (ok (some "ipfs://ipfs/QmPAg1mjxcEQPPtqsLoEcauVedaeMH81WXDPvPx3VC5zUz"))
 )
 
-;; Mint new tokens.
-(define-private (mint (owner principal) (token-id uint))
-  (if (mint-token token-id owner)
-      (ok token-id)
-      failed-to-mint-err))
+;; error handling
+(define-constant nft-not-owned-err (err u401)) ;; unauthorized
+(define-constant not-approved-spender-err (err u403)) ;; forbidden
+(define-constant nft-not-found-err (err u404)) ;; not found
+(define-constant sender-equals-recipient-err (err u405)) ;; method not allowed
+(define-constant nft-exists-err (err u409)) ;; conflict
+(define-constant unauthorized-transfer-err (err {kind: "permission-denied", code: u3}))
+
+
+(define-private (nft-transfer-err (code uint))
+  (if (is-eq u1 code)
+    nft-not-owned-err
+    (if (is-eq u2 code)
+      sender-equals-recipient-err
+      (if (is-eq u3 code)
+        nft-not-found-err
+        (err code)))))
+
+(define-private (nft-mint-err (code uint))
+  (if (is-eq u1 code)
+    nft-exists-err
+    (err code)))
+
+(define-read-only (get-errstr (code uint))
+  (ok
+    (if (is-eq u401 code)
+      "nft-not-owned"
+      (if (is-eq u404 code)
+        "nft-not-found"
+        (if (is-eq u405 code)
+          "sender-equals-recipient"
+          (if (is-eq u409 code)
+            "nft-exists"
+            "unknown-error"))))))
 
 ;; Initialize the contract
 (begin

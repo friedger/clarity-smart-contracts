@@ -26,7 +26,8 @@ describe("non-fungible-token contract test suite", () => {
   });
 
   it("should have a valid syntax", async () => {
-    await client.deployContract();
+    const result = await client.deployContract();
+    expect(result.success, JSON.stringify(result)).to.be.true;
   });
 
   it("should transfer", async () => {
