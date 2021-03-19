@@ -15,7 +15,7 @@
 ;;  You should have received a copy of the GNU General Public License
 ;;  along with Blockstack. If not, see <http://www.gnu.org/licenses/>.
 
-(impl-trait 'ST1JSH2FPE8BWNTP228YZ1AZZ0HE0064PS54Q30F0.nft-trait.nft-trait)
+(impl-trait 'ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW.nft-trait.nft-trait)
 ;; Non Fungible Token, modeled after ERC-721
 (define-non-fungible-token non-fungible-token uint)
 
