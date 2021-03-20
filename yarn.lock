@@ -31,10 +31,10 @@
   dependencies:
     "@stacks/common" "^1.2.2"
 
-"@stacks/transactions@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-1.2.2.tgz#b5d8eca6d12c92454f296aa436fea1906efeac53"
-  integrity sha512-V/2PNtePtCrJqm32J7LUm6G+Bj4tXgWwGt1obYHJZwHmHztUCz3v2ogtiw+3tX2qT/QTw37PX8hJnt1Pn4LUaw==
+"@stacks/transactions@^1.3.0":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-1.3.3.tgz#46c331f3c96a091a2babad60b1d0bebdb1d9ac97"
+  integrity sha512-bs8TAASLUb19R05VdFOOaXyxflPdZAOpy6GgbH1RMNXpWiKEsz4hEYsAxW/QdZC9UINhLUE42MhH03Ydmnyu/Q==
   dependencies:
     "@stacks/common" "^1.2.2"
     "@stacks/network" "^1.2.2"
