@@ -1,3 +1,4 @@
+(impl-trait 'ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW.sip-10-ft-standard.ft-trait)
 ;;  copyright: (c) 2013-2019 by Blockstack PBC, a public benefit corporation.
 
 ;;  This file is part of Blockstack.
@@ -18,9 +19,6 @@
 ;;;; Rocket-Token
 
 (define-fungible-token rocket-token)
-(define-map balances
-  ((owner principal))
-  ((balance uint)))
 (define-data-var total-supply uint u30)
 
 (define-constant err-min-transfer u10)
@@ -29,13 +27,24 @@
   (ok (var-get total-supply))
 )
 
-(define-public (get-balance (account principal))
+(define-read-only (get-balance (account principal))
   (ok
     (ft-get-balance rocket-token account)
   )
 )
 
-(define-public (transfer? (sender principal) (receiver principal) (amount uint))
+(define-read-only (get-decimals) (ok u6))
+
+(define-read-only (get-name) (ok "Rocket Token"))
+
+(define-read-only (get-symbol) (ok "RKT"))
+
+(define-read-only (get-token-uri) (ok none))
+
+
+
+
+(define-public (transfer (amount uint) (sender principal) (receiver principal))
   (begin
     (if (> amount u0)
       (match (ft-transfer? rocket-token amount sender receiver)
@@ -47,12 +56,10 @@
 )
 
 (define-public (buy (amount uint))
-  (begin
-    (stx-burn? amount tx-sender)
-    (ft-mint? rocket-token amount tx-sender)))
+  (match (stx-burn? amount tx-sender)
+    success (ft-mint? rocket-token amount tx-sender)
+    error (err error)))
 
 ;; Initialize the contract
-(begin
-  (ft-mint? rocket-token u20 'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7) ;; alice
-  (ft-mint? rocket-token u10 'S02J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKPVKG2CE) ;; bob
-)
+(ft-mint? rocket-token u20 'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7) ;; alice
+(ft-mint? rocket-token u10 'S02J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKPVKG2CE) ;; bob

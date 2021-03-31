@@ -25,10 +25,15 @@ async function deployHodlToken() {
   return deployContract(contractName, "tokens");
 }
 
+async function deployRockets() {
+  await deployContract("rocket-factory", "rockets");
+  await deployContract("rocket-market", "rockets");
+}
 (async () => {
   await deployFlipCoin();
   await deployFlipCoinTaxOffice();
   await deployFlipCoinJackpot();
   await deployFlipCoinAtTwo();
   await deployHodlToken();
+  await deployRockets();
 })();

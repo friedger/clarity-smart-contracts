@@ -1,4 +1,9 @@
-import { Provider, ProviderRegistry, Receipt } from "@blockstack/clarity";
+import {
+  Client,
+  Provider,
+  ProviderRegistry,
+  Receipt,
+} from "@blockstack/clarity";
 import { expect } from "chai";
 import { RocketFactoryClient } from "../../src/client/rockets/rocketFactory";
 import { RocketMarketClient } from "../../src/client/rockets/rocketMarket";
@@ -20,9 +25,19 @@ describe("RocketFactoryClient Test Suite", () => {
   const factory = addresses[2];
 
   const deployContracts = async () => {
-    await rocketTokenClient.deployContract();
-    await rocketMarketClient.deployContract();
-    await rocketFactoryClient.deployContract();
+    await new Client(
+      "ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW.nft-trait",
+      "sips/nft-trait",
+      provider
+    ).deployContract();
+    await new Client(
+      "ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW.sip-10-ft-standard",
+      "sips/ft-trait",
+      provider
+    ).deployContract();
+    console.log(await rocketTokenClient.deployContract());
+    console.log(await rocketMarketClient.deployContract());
+    console.log(await rocketFactoryClient.deployContract());
   };
 
   before(async () => {
@@ -39,8 +54,6 @@ describe("RocketFactoryClient Test Suite", () => {
     await expect(rocketFactoryClient.checkContract()).to.not.throw;
     await expect(rocketTokenClient.checkContract()).to.not.throw;
     await expect(rocketMarketClient.checkContract()).to.not.throw;
-    // let res = await rocketTokenClient.checkContract();
-    // expect(res).to.be.true;
   });
 
   describe("Deploying an instance of the contract", () => {

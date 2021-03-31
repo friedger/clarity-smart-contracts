@@ -16,8 +16,8 @@ export class RocketTokenClient extends Client {
   ): Promise<Receipt> {
     const tx = this.createTransaction({
       method: {
-        name: "transfer?",
-        args: [`'${params.sender}`, `'${to}`, `u${value}`],
+        name: "transfer",
+        args: [`u${value}`, `'${params.sender}`, `'${to}`],
       },
     });
     await tx.sign(params.sender);

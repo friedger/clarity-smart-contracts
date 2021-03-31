@@ -19,8 +19,9 @@
 
 ;;; Storage
 (define-map orderbook
-  ((buyer principal))
-  ((rocket-id uint) (ordered-at-block uint) (ready-at-block uint) (balance uint) (size uint)))
+  principal
+  {rocket-id: uint, ordered-at-block: uint, ready-at-block: uint, balance: uint, size: uint})
+
 (define-data-var last-rocket-id uint u0)
 
 ;;; Constants
@@ -46,7 +47,7 @@
 (define-private (can-user-buy (user principal))
   (let ((ordered-at-block
       (get ordered-at-block
-        (print (map-get? orderbook {buyer: (print user)})))))
+        (print (map-get? orderbook (print user))))))
       (is-none ordered-at-block)))
 
 ;; Check if a given user can claim a rocket previously ordered
@@ -60,7 +61,7 @@
     (let ((ready-at-block
         ;; shallow-return false if entry doesn't exist
         (unwrap! (get ready-at-block
-          (map-get? orderbook {buyer: user})) false)))
+          (map-get? orderbook user)) false)))
       (begin
         (print ready-at-block)
         (>= block-height ready-at-block)
@@ -85,7 +86,7 @@
 ;; returns: Response<int, int>
 (define-public (order-rocket (size uint))
 (begin
-  (print (map-get? orderbook {buyer: tx-sender}))
+  (print (map-get? orderbook tx-sender))
   (let ((down-payment (/ size u2))
     (rocket-id (new-rocket-id)))
     (if (and
@@ -93,10 +94,10 @@
           (<= size u20)
           (can-user-buy tx-sender))
       (if (and
-        (is-ok (contract-call? 'SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB.rocket-token transfer? tx-sender funds-address down-payment))
+        (is-ok (contract-call? 'SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB.rocket-token transfer down-payment tx-sender funds-address))
         (map-set orderbook
-          {buyer: tx-sender}
-          { rocket-id: (new-rocket-id),
+          tx-sender
+          {rocket-id: (new-rocket-id),
             ordered-at-block: block-height,
             ready-at-block: (+ block-height size),
             size: size,
@@ -113,9 +114,9 @@
 (define-public (claim-rocket)
 (begin
   (print tx-sender)
-  (print (map-get? orderbook {buyer: tx-sender}))
+  (print (map-get? orderbook tx-sender))
   (let ((order-entry
-         (unwrap! (map-get? orderbook {buyer: tx-sender})
+         (unwrap! (map-get? orderbook tx-sender)
                    no-order-on-books-err)))
     (let ((buyer     tx-sender)
           (balance   (get balance order-entry))
@@ -123,11 +124,14 @@
           (rocket-id (get rocket-id order-entry)))
         (print balance)
         (if (and (can-user-claim buyer)
-               (is-ok (contract-call? 'SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB.rocket-token transfer? tx-sender funds-address balance))
+               (is-ok (contract-call? 'SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB.rocket-token transfer balance tx-sender funds-address))
                (is-ok (as-contract (contract-call? 'SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB.rocket-market mint buyer rocket-id size )))
-               (map-delete orderbook ((buyer buyer))))
+               (map-delete orderbook buyer))
           (ok rocket-id)
           order-fulfillment-err)))))
+
+(define-read-only (get-last-token-id)
+  (var-get last-rocket-id))
 
 ;; Initialize the contract by
 ;; - taking ownership of rocket-market's mint function

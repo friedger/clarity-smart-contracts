@@ -1,3 +1,5 @@
+(impl-trait 'ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW.nft-trait.nft-trait)
+
 ;;  copyright: (c) 2013-2019 by Blockstack PBC, a public benefit corporation.
 
 ;;  This file is part of Blockstack.
@@ -21,14 +23,14 @@
 (define-constant funds-address 'SZ2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKQ9H6DPR)
 
 ;;; Storage
+(define-data-var last-rocket-id uint u0)
+
 (define-map rockets-count
-  ((owner principal))
-  ((count uint)))
+  principal uint)
 (define-map factory-address
-  ((id int))
-  ((address principal)))
+  int principal)
 (define-map rockets-details
-  ((id uint)) ((created-at uint) (size uint)))
+  uint {created-at: uint, size: uint})
 
 ;;; Constants
 
@@ -40,33 +42,25 @@
 
 ;;; Internals
 
-;; Gets the amount of rockets owned by the specified address
-;; args:
-;; @account (principal) the principal of the user
-;; returns: uint
-(define-read-only (get-balance (account principal))
-  (default-to u0
-    (get count
-      (map-get? rockets-count ((owner account)))
-    )
-  )
-)
+;; Determins the maximum of two values
+;; retuns: uint
+(define-private (max (value1 uint) (value2 uint))
+  (if (< value1 value2) value2 value1))
 
 ;; Check if the transaction has been sent by the factory-address
 ;; returns: boolean
 (define-private (is-tx-from-factory)
   (let ((address
-         (get address
-              (unwrap! (map-get? factory-address ((id 0)))
-                        false))))
+          (unwrap! (map-get? factory-address 0)
+                    false)))
     (is-eq tx-sender address)))
 
 ;; Gets the owner of the specified rocket ID
 ;; args:
 ;; @rocket-id (int) the id of the rocket to identify
 ;; returns: option<principal>
-(define-private (get-owner? (rocket-id uint))
-  (nft-get-owner? rocket rocket-id)
+(define-read-only (get-owner (rocket-id uint))
+  (ok (nft-get-owner? rocket rocket-id))
 )
 
 ;;; Public functions
@@ -77,23 +71,24 @@
 ;; @recipient (principal) the principal of the new owner of the rocket
 ;; @rocket-id (int) the id of the rocket to trade
 ;; returns: Response<int,int>
-(define-public (transfer-rocket (recipient principal) (rocket-id uint))
+(define-public (transfer (rocket-id uint) (sender principal) (recipient principal))
    (let ((balance-sender (get-balance tx-sender))
          (balance-recipient (get-balance recipient)))
      (if (and
-          (is-eq (unwrap! (get-owner? rocket-id) no-such-rocket-err)
+          (is-eq (unwrap! (nft-get-owner? rocket rocket-id) no-such-rocket-err)
                tx-sender)
           (> balance-sender u0)
+          (is-eq tx-sender sender)
           (not (is-eq recipient tx-sender)))
          (begin
-           (nft-transfer? rocket rocket-id tx-sender recipient)
+           (unwrap! (nft-transfer? rocket rocket-id tx-sender recipient) bad-rocket-transfer-err)
            (map-set rockets-count
-                       ((owner recipient))
-                       ((count (+ balance-recipient u1))))
+                       recipient
+                       (+ balance-recipient u1))
            (map-set rockets-count
-                       ((owner tx-sender))
-                       ((count (- balance-sender u1))))
-           (ok rocket-id))
+                       tx-sender
+                       (- balance-sender u1))
+           (ok true))
          bad-rocket-transfer-err))
 )
 
@@ -113,14 +108,37 @@
           (print size)
           (print owner)
           (try! (nft-mint? rocket rocket-id owner))
+          (var-set last-rocket-id (max (var-get last-rocket-id) rocket-id))
           (map-set rockets-count
-                      ((owner owner))
-                      ((count (+ u1 current-balance))))
+                      owner
+                      (+ u1 current-balance))
           (ok true)
         )
       )
       unauthorized-mint-err))
 
+;;
+;; NFT functions
+;;
+
+;; Gets the amount of rockets owned by the specified address
+;; args:
+;; @account (principal) the principal of the user
+;; returns: uint
+(define-read-only (get-balance (account principal))
+  (default-to u0
+    (map-get? rockets-count account)
+  )
+)
+
+;; Last token ID, limited to uint range
+(define-read-only (get-last-token-id)
+  (ok (var-get last-rocket-id))
+)
+
+;; URI for metadata associated with the token
+(define-read-only (get-token-uri (rocket-id uint))
+  (ok none))
 
 ;;
 ;; Fly functions
@@ -129,7 +147,7 @@
 ;; a map from rocket ships to their allowed
 ;;  pilots
 (define-map allowed-pilots
-    ((rocket-ship uint)) ((pilots (list 10 principal))))
+    uint (list 10 principal))
 
 ;; implementing a contains function via fold
 (define-private (contains-check
@@ -158,7 +176,7 @@
 (define-public (fly-ship (ship uint))
   (let ((pilots (default-to
                    (list)
-                   (get pilots (map-get? allowed-pilots { rocket-ship: ship })))))
+                  (map-get? allowed-pilots  ship))))
     (if (contains tx-sender pilots)
         (begin (print "Flew the rocket-ship!")
                (ok true))
@@ -180,17 +198,17 @@
    (asserts! (is-eq tx-sender contract-caller) (err u1))
    ;; sender must own the rocket ship
    (asserts! (is-eq (some tx-sender)
-                  (get-owner? ship)) (err u2))
+                  (nft-get-owner? rocket ship)) (err u2))
    (let ((prev-pilots (default-to
                          (list)
-                         (get pilots (map-get? allowed-pilots { rocket-ship: ship })))))
+                         (map-get? allowed-pilots ship))))
     ;; don't add a pilot already in the list
     (asserts! (not (contains pilot prev-pilots)) (err u3))
     ;; append to the list, and check that it is less than
     ;;  the allowed maximum
     (match (as-max-len? (append prev-pilots pilot) u10)
            next-pilots
-             (ok (map-set allowed-pilots {rocket-ship: ship} {pilots: next-pilots}))
+             (ok (map-set allowed-pilots ship next-pilots))
            ;; too many pilots already
            (err u4)))))
 
@@ -202,10 +220,9 @@
 ;; returns: Response<Principal, int>
 (define-public (set-factory)
   (let ((factory-entry
-         (map-get? factory-address ((id 0)))))
+         (map-get? factory-address  0)))
     (if (and (is-none factory-entry)
              (map-insert factory-address
-                            ((id 0))
-                            ((address tx-sender))))
+                            0 tx-sender))
         (ok tx-sender)
         factory-already-set-err)))

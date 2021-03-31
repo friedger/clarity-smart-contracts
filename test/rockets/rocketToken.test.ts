@@ -1,4 +1,4 @@
-import { Provider, ProviderRegistry, Receipt } from "@blockstack/clarity";
+import { Client, Provider, ProviderRegistry, Receipt } from "@blockstack/clarity";
 import { expect } from "chai";
 import { RocketTokenClient } from "../../src/client/rockets/rocketToken";
 
@@ -17,6 +17,12 @@ describe("RocketTokenClient Test Suite", () => {
 
   before(async () => {
     provider = await ProviderRegistry.createProvider();
+    console.log(await new Client(
+      "ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW.sip-10-ft-standard",
+      "sips/ft-trait",
+      provider
+    ).deployContract());
+
     rocketTokenClient = new RocketTokenClient(provider);
     await rocketTokenClient.deployContract();
   });

@@ -1,4 +1,4 @@
-import { Provider, ProviderRegistry, Receipt } from "@blockstack/clarity";
+import { Client, Provider, ProviderRegistry, Receipt } from "@blockstack/clarity";
 import { expect } from "chai";
 import { RocketFactoryClient } from "../../src/client/rockets/rocketFactory";
 import { RocketMarketClient } from "../../src/client/rockets/rocketMarket";
@@ -20,6 +20,16 @@ describe("RocketMarketClient Test Suite", () => {
   const bob = addresses[1];
 
   const deployContracts = async () => {
+    await new Client(
+      "ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW.nft-trait",
+      "sips/nft-trait",
+      provider
+    ).deployContract();
+    await new Client(
+      "ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW.sip-10-ft-standard",
+      "sips/ft-trait",
+      provider
+    ).deployContract();
     await rocketTokenClient.deployContract();
     await rocketMarketClient.deployContract();
     await rocketFactoryClient.deployContract();
