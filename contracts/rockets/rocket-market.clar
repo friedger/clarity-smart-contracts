@@ -20,7 +20,7 @@
 ;;;; Rocket-Market
 
 (define-non-fungible-token rocket uint)
-(define-constant funds-address 'SZ2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKQ9H6DPR)
+(define-constant funds-address 'ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW)
 
 ;;; Storage
 (define-data-var last-rocket-id uint u0)
@@ -108,6 +108,7 @@
           (print size)
           (print owner)
           (try! (nft-mint? rocket rocket-id owner))
+          (map-set rockets-details rocket-id {size: size, created-at: block-height})
           (var-set last-rocket-id (max (var-get last-rocket-id) rocket-id))
           (map-set rockets-count
                       owner

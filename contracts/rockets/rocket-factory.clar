@@ -97,7 +97,7 @@
         (is-ok (contract-call? 'SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB.rocket-token transfer down-payment tx-sender funds-address))
         (map-set orderbook
           tx-sender
-          {rocket-id: (new-rocket-id),
+          {rocket-id: rocket-id,
             ordered-at-block: block-height,
             ready-at-block: (+ block-height size),
             size: size,

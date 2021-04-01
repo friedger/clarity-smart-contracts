@@ -19,10 +19,10 @@ const mocknet = false;
 
 const STACKS_CORE_URL = local
   ? "http://localhost:20443"
-  : "http://testnet-master.blockstack.org:20443";
+  : "https://stacks-node-api.testnet.stacks.co/";
 const STACKS_API_URL = local
   ? "http://localhost:3999"
-  : "https://stacks-node-api.blockstack.org";
+  : "https://stacks-node-api.testnet.stacks.co";
 const network = new StacksTestnet();
 network.coreApiUrl = STACKS_API_URL;
 
@@ -142,7 +142,7 @@ async function doStacking() {
         hashbytes: bufferCV(Buffer.from(hash, "hex")),
         version: bufferCV(Buffer.from("00", "hex")),
       }),
-      uintCV(3),
+      uintCV(12),
     ],
     senderKey: secretKey,
     network,

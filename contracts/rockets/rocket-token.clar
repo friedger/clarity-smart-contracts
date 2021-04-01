@@ -19,12 +19,11 @@
 ;;;; Rocket-Token
 
 (define-fungible-token rocket-token)
-(define-data-var total-supply uint u30)
 
 (define-constant err-min-transfer u10)
 
 (define-public (get-total-supply)
-  (ok (var-get total-supply))
+  (ok (ft-get-supply rocket-token))
 )
 
 (define-read-only (get-balance (account principal))
@@ -33,16 +32,13 @@
   )
 )
 
-(define-read-only (get-decimals) (ok u6))
+(define-read-only (get-decimals) (ok u0))
 
 (define-read-only (get-name) (ok "Rocket Token"))
 
 (define-read-only (get-symbol) (ok "RKT"))
 
 (define-read-only (get-token-uri) (ok none))
-
-
-
 
 (define-public (transfer (amount uint) (sender principal) (receiver principal))
   (begin

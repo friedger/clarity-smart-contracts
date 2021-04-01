@@ -41,13 +41,12 @@ const keys = mocknet
   ? testnetKeyMap[ADDR1]
   : JSON.parse(
       fs
-        .readFileSync("../../blockstack/stacks-blockchain/keychain.json")
+        .readFileSync("../../blockstack/stacks-blockchain/keychain2.json")
         .toString()
     );
 
-export const secretKey = mocknet ? keys.secretKey : keys.private;
-export const contractAddress = mocknet ? keys.address : keys.stacks;
-
+export const secretKey = keys.private;
+export const contractAddress = keys.stacks;
 //
 export async function handleTransaction(transaction: StacksTransaction) {
   const result = await broadcastTransaction(transaction, network);
@@ -78,14 +77,16 @@ export async function handleTransaction(transaction: StacksTransaction) {
 
 export async function deployContract(
   contractName: string,
-  path: string = "experiments"
+  options?: { path?: string; name?: string; replace?: (s: string) => string }
 ) {
+  const path = options?.path || "experiments";
+  const name = options?.name || contractName;
   const codeBody = fs
-    .readFileSync(`./contracts/${path}/${contractName}.clar`)
+    .readFileSync(`./contracts/${path}/${name}.clar`)
     .toString();
   var transaction = await makeContractDeploy({
     contractName,
-    codeBody: codeBody,
+    codeBody: options?.replace ? options.replace(codeBody) : codeBody,
     senderKey: secretKey,
     network,
   });
