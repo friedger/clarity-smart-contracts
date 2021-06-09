@@ -33,10 +33,10 @@ There are two contracts using `flip-coin` to realize a betting game: `flip-coin-
 
 ### Flip Coin Betting with Jackpot
 
-Users can bet 1000 mSTX on the outcome of that function, once for each block.
+Users can bet 1000 uSTX on the outcome of that function, once for each block.
 
-If the user was correct, the amount of 1000 mSTX is reimbursed.
-If there was another user that bet on the reverse outcome then the winner gets 2000 mSTX.
+If the user was correct, the amount of 1000 uSTX is reimbursed.
+If there was another user that bet on the reverse outcome then the winner gets 2000 uSTX.
 If the user was incorrect and the only user for this block, the amount goes to the jackpot.
 
 The next winner will receives the jackpot in addition to the usual payout.
@@ -47,9 +47,9 @@ The payout happens when another bet is placed.
 
 ### Flip Coin Betting against somebody else (at two players)
 
-Users can bet 1000 mSTX on the outcome of that function. The bet is pending until another users bets against it. There can be only one pending bet at the time.
+Users can bet 1000 uSTX on the outcome of that function. The bet is pending until another users bets against it. There can be only one pending bet at the time.
 
-The user who was correct receives the amount of 1800 mSTX (1000 mSTX reimbursment + 800 mSTX from the other player, 10% are sent to the jackpot of the other game as a tax)
+The user who was correct receives the amount of 1800 uSTX (1000 uSTX reimbursment + 800 uSTX from the other player, 10% are sent to the jackpot of the other game as a tax)
 
 The payout happens when another bet is placed.
 

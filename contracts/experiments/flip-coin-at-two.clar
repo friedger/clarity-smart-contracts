@@ -106,7 +106,7 @@
           (panic))
       (panic)))
 
-;; bet 1000 mSTX on the each value for the given users.
+;; bet 1000 uSTX on the each value for the given users.
 ;; Only one set of users can bet for each block.
 ;; if payout needs to be done then this function call will do it (note that the caller
 ;; needs to provide corresponding post conditions)

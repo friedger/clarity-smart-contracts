@@ -73,7 +73,7 @@
   )
 )
 
-;; bet 1000 mSTX on the given value. Only one user can bet on that value for each block.
+;; bet 1000 uSTX on the given value. Only one user can bet on that value for each block.
 ;; if payout needs to be done then this function call will do it (note that the caller
 ;; needs to provide corresponding post conditions)
 (define-public (bet (value bool))

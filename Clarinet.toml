@@ -1,0 +1,29 @@
+
+[project]
+name = "friedger-smart-contracts"
+
+[contracts.history]
+path = "contracts/experiments/history.clar"
+depends_on = []
+
+[contracts.flip-coin]
+path = "contracts/experiments/flip-coin.clar"
+depends_on = []
+
+[contracts.flip-coin-tax-office]
+path = "contracts/experiments/flip-coin-tax-office.clar"
+depends_on = []
+
+[contracts.flip-coin-delegate]
+path = "contracts/experiments/flip-coin-delegate.clar"
+depends_on = ["flip-coin"]
+
+[contracts.flip-coin-jackpot]
+path = "contracts/experiments/flip-coin-jackpot.clar"
+depends_on = ["flip-coin", "flip-coin-tax-office"]
+
+[contracts.flip-coin-at-two]
+path = "contracts/experiments/flip-coin-at-two.clar"
+depends_on = ["flip-coin", "flip-coin-tax-office", "flip-coin-jackpot"]
+
+[notebooks]
