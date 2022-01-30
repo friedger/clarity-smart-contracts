@@ -1,0 +1,15 @@
+
+[project]
+name = "owned-profiles"
+
+[contracts.fun-nft]
+path = "contracts/external/fun-nft.clar"
+depends_on = ["nft-trait"]
+
+[contracts.nft-trait]
+path = "contracts/external/nft-trait.clar"
+depends_on = []
+
+[contracts.owned-profiles]
+path = "contracts/owned-profiles.clar"
+depends_on = []
