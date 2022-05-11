@@ -20,5 +20,6 @@ The following rules apply:
   owne it (anymore).
 * profiles can be blocked for 4000 blocks so that new owners can't register it
   during the blocking period. This is to protect users from impersonation.
+* apps can provide a commission fee paid during registration.
 
 

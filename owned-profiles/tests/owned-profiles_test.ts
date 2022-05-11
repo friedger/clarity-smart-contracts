@@ -16,7 +16,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_1.address
       ),
     ]);
@@ -65,7 +66,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_1.address
       ),
 
@@ -133,7 +135,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_1.address
       ),
       Tx.contractCall(
@@ -199,7 +202,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_1.address
       ),
       // delete
@@ -219,7 +223,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_2.address
       ),
     ]);
@@ -247,7 +252,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_1.address
       ),
       // delete
@@ -272,7 +278,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_2.address
       ),
     ]);
@@ -288,7 +295,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_2.address
       ),
     ]);
@@ -300,7 +308,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_2.address
       ),
     ]);
@@ -325,7 +334,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_1.address
       ),
       // transfer
@@ -352,7 +362,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_2.address
       ),
     ]);
@@ -389,7 +400,8 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_1.address
       ),
       Tx.contractCall(
@@ -441,11 +453,45 @@ Clarinet.test({
       Tx.contractCall(
         'owned-profiles',
         'register',
-        [types.principal(`${deployer.address}.fun-nft`), types.uint(1)],
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-free`)],
         wallet_2.address
       ),
     ]);
 
     block.receipts[0].result.expectErr().expectUint(403);
+  },
+});
+
+
+
+Clarinet.test({
+  name: 'Ensure that user pays commission during registration',
+  async fn(chain: Chain, accounts: Map<string, Account>) {
+    let deployer = accounts.get('deployer')!;
+    let wallet_1 = accounts.get('wallet_1')!;
+    let wallet_2 = accounts.get('wallet_2')!;
+
+    let block = chain.mineBlock([
+      Tx.contractCall('fun-nft', 'mint', [], wallet_1.address),
+    ]);
+    block.receipts[0].result.expectOk();
+
+    block = chain.mineBlock([
+      Tx.contractCall(
+        'owned-profiles',
+        'register',
+        [types.principal(`${deployer.address}.fun-nft`), types.uint(1),
+        types.principal(`${deployer.address}.commission-fixed`)],
+        wallet_1.address
+      ),
+    ]);
+
+    block.receipts[0].result.expectOk()
+    block.receipts[0].events.expectSTXTransferEvent(
+      2_000_000,
+      wallet_1.address,
+      deployer.address
+    )
   },
 });

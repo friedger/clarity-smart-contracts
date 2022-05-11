@@ -10,6 +10,14 @@ depends_on = ["nft-trait"]
 path = "contracts/external/nft-trait.clar"
 depends_on = []
 
+[contracts.commission-fixed]
+path = "contracts/commission-fixed.clar"
+depends_on = ["owned-profiles"]
+
+[contracts.commission-free]
+path = "contracts/commission-free.clar"
+depends_on = ["owned-profiles"]
+
 [contracts.owned-profiles]
 path = "contracts/owned-profiles.clar"
 depends_on = []

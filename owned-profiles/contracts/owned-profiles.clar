@@ -6,6 +6,10 @@
   (get-owner (uint) (response (optional principal) uint))
 ))
 
+(define-trait commission-trait
+  ((pay (<ownable-trait> uint) (response bool uint))))
+
+
 (define-map user-profile principal {contract: principal, id: uint})
 (define-map profile-user {contract: principal, id: uint} principal)
 (define-map profile-blocked-period {contract: principal, id: uint} uint)
@@ -13,6 +17,7 @@
 ;; about 1 month
 (define-constant blocking-period u4000)
 
+(define-constant err-payment-required (err 402))
 (define-constant err-not-authorized (err u403))
 (define-constant err-not-found (err u404))
 (define-constant err-profile-blocked (err u500))
@@ -21,7 +26,7 @@
 ;; @desc register a ownable profile item. Returns `(ok true)` on success
 ;; @param ownable; an NFT or similar that is ownable
 ;; @param id; identifier of the ownable
-(define-public (register (ownable <ownable-trait>) (id uint))
+(define-public (register (ownable <ownable-trait>) (id uint) (commission <commission-trait>))
     (let ((owner (unwrap! (unwrap! (contract-call? ownable get-owner id) err-not-found) err-not-found))
           (current-profile (map-get? user-profile tx-sender))
           (new-profile {contract: (contract-of ownable), id: id}))
@@ -34,7 +39,7 @@
           true)
         (map-set user-profile tx-sender new-profile)
         (map-set profile-user new-profile tx-sender)
-        (ok true)))
+        (contract-call? commission pay ownable id)))
 
 ;; @desc remove profile entry of tx-sender's ownable profile.
 ;; Returns `(ok true)` on success
