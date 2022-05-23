@@ -26,6 +26,7 @@
 ;; @desc register a ownable profile item. Returns `(ok true)` on success
 ;; @param ownable; an NFT or similar that is ownable
 ;; @param id; identifier of the ownable
+;; @param commission-trait; fee to be paid during registration
 (define-public (register (ownable <ownable-trait>) (id uint) (commission <commission-trait>))
     (let ((owner (unwrap! (unwrap! (contract-call? ownable get-owner id) err-not-found) err-not-found))
           (current-profile (map-get? user-profile tx-sender))
@@ -50,6 +51,7 @@
       (ok true)))
 
 ;; @desc remove profile entry of tx-sender's ownable profile.
+;; @param ownable; must be the contract used during registration
 ;; The profile must be owned by sender. The profile is blocked for 4000 blocks.
 ;; Returns `(ok true)` on success
 (define-public (delete-and-block (ownable <ownable-trait>))
@@ -68,11 +70,14 @@
 
 ;; @desc returns the registered profile. The registration does not verify
 ;; whether the user indeed owns the profile item.
+;; @param user; the user with a profile
 (define-read-only (get-unverified-profile (user principal))
     (map-get? user-profile user))
 
 ;; @desc returns the registered profile if it is part of the provided contract.
 ;; the profile item is owned by the user at the time of calling.
+;; @param user; the user with a profile
+;; @param ownable; the contract of the profile
 (define-public (resolve-principal-to-profile (user principal) (ownable <ownable-trait>))
     (let ((profile (unwrap! (map-get? user-profile user) (ok none)))
         (owner (unwrap! (unwrap! (contract-call? ownable get-owner (get id profile)) (ok none)) (ok none))))
@@ -82,6 +87,8 @@
             (ok none))))
 
 ;; @desc returns the owner of the provided profile item if the owner registered the item as user profile.
+;; @param ownable; the contract of the profile
+;; @param id; the id of the profile
 (define-public (resolve-profile-to-principal (ownable <ownable-trait>) (id uint))
     (let ((registered-owner (unwrap! (map-get? profile-user {contract: (contract-of ownable), id: id}) (ok none)))
             (owner (unwrap! (unwrap! (contract-call? ownable get-owner id) err-not-found) err-not-found)))
@@ -90,9 +97,13 @@
             (ok none))))
 
 ;; @desc returns true if the profile is not blocked for new registrations
+;; @param profile; tuple of contract and id of the profile
 (define-read-only (is-profile-ready (profile {contract: principal, id: uint}))
   (> block-height (unwrap! (map-get? profile-blocked-period profile) true)))
 
+;; @desc returns the block height until the profile can't be used by other users
+;; @param ownable; the contract of the profile
+;; @param id; the id of the profile
 (define-read-only (get-profile-blocked-until (ownable <ownable-trait>) (id uint))
   (map-get? profile-blocked-period {contract: (contract-of ownable), id: id}))
 

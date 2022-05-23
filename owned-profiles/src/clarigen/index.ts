@@ -1,12 +1,18 @@
 import { ownedProfilesInfo } from './owned-profiles';
+import { commissionFreeInfo } from './commission-free';
+import { commissionFixedInfo } from './commission-fixed';
 import { nftTraitInfo } from './external/nft-trait';
 import { funNftInfo } from './external/fun-nft';
 export type { OwnedProfilesContract } from './owned-profiles';
+export type { CommissionFreeContract } from './commission-free';
+export type { CommissionFixedContract } from './commission-fixed';
 export type { NftTraitContract } from './external/nft-trait';
 export type { FunNftContract } from './external/fun-nft';
 
 export const contracts = {
   ownedProfiles: ownedProfilesInfo,
+  commissionFree: commissionFreeInfo,
+  commissionFixed: commissionFixedInfo,
   nftTrait: nftTraitInfo,
   funNft: funNftInfo,
 };
