@@ -1,6 +1,4 @@
-(define-map tokens ((token-id uint))
-  ((last-tick uint))
-)
+(define-map tokens {token-id: uint} {last-tick: uint})
 
 (define-non-fungible-token perishable-token uint)
 (define-data-var next-id uint u1)
@@ -51,7 +49,7 @@
 
 (define-read-only (perished (token-id uint))
   (match (map-get? tokens {token-id: token-id})
-    monster (ok (not (is-last-tick-young (get last-tick monster))))
+    token (ok (not (is-last-tick-young (get last-tick token))))
     (err err-invalid-token-id)
   )
 )

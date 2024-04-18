@@ -1,15 +1,26 @@
+
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2019",
-    "lib": ["es2019"],
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ESNext"],
+    "skipLibCheck": true,
+
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
     "strict": true,
-    "strictNullChecks": true,
-    "sourceMap": true,
-    "noEmit": true
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["tests"],
-  "exclude": ["node_modules"]
+  "include": [
+    "node_modules/@hirosystems/clarinet-sdk/vitest-helpers/src",
+    "tests"
+  ]
 }
